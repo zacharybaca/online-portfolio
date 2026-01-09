@@ -1,0 +1,297 @@
+{
+  "projects": [
+    {
+      "id": 0,
+      "project_name": "Generic Word Guessing Game",
+      "description": "A Game Where A User Tries To Guess The Letters of a Random Phrase",
+      "technologies": [
+        "Vanilla JS",
+        "Object Oriented Programming",
+        "HTML",
+        "CSS"
+      ],
+      "live_link": "https://zacharybaca.github.io/oop-game/",
+      "github_link": "https://github.com/zacharybaca/oop-game",
+      "image_urls": [
+        "/images/oop-game/begin-screen.png",
+        "/images/oop-game/landing-page.png",
+        "/images/oop-game/lose-screen.png",
+        "/images/oop-game/play-screen.png",
+        "/images/oop-game/win-screen.png"
+      ]
+    },
+    {
+      "id": 1,
+      "project_name": "Data Pagination",
+      "description": "A Directory Where A Limited Number of Users Are Displayed On Each Page",
+      "technologies": ["Pagination Techniques", "Vanilla JS", "HTML", "CSS"],
+      "live_link": "https://zacharybaca.github.io/data-pagination/",
+      "github_link": "https://github.com/zacharybaca/data-pagination",
+      "image_urls": [
+        "/images/data-pagination/landing-page.png",
+        "/images/data-pagination/pagination-page.png",
+        "/images/data-pagination/pagination-page2.png"
+      ]
+    },
+    {
+      "id": 2,
+      "project_name": "Kwitter Clone",
+      "description": "A Minimalistic Replica of Twitter. This Was a Group Project That I Did With My Classmates.",
+      "technologies": ["React", "Axios", "Redux", "HTML", "CSS", "REST API"],
+      "live_link": "https://kwitter-clone-ht0uxa661.vercel.app",
+      "github_link": "https://github.com/YaseenFSD/Kwitter",
+      "image_urls": [
+        "/images/kwitter/landing-page.png",
+        "/images/kwitter/profile-page.png",
+        "/images/kwitter/signup-page.png"
+      ]
+    },
+    {
+      "id": 3,
+      "project_name": "Interactive Form",
+      "description": "A Form That Provides Validation Errors When Not Filled Out Correctly",
+      "technologies": ["Vanilla JS", "HTML", "CSS", "RegEx"],
+      "live_link": "https://zacharybaca.github.io/Interactive-Form/",
+      "github_link": "https://github.com/zacharybaca/Interactive-Form",
+      "image_urls": [
+        "/images/interactive-form/landing-page.png",
+        "/images/interactive-form/shirt-screen.png",
+        "/images/interactive-form/shirt-screen2.png",
+        "/images/interactive-form/validation-error.png"
+      ]
+    },
+    {
+      "id": 4,
+      "project_name": "Quote Generator",
+      "description": "A Static Webpage The Renders Random Quotes Upon Clicking a Button",
+      "technologies": ["Vanilla JS", "HTML", "CSS"],
+      "live_link": "https://zacharybaca.github.io/quote-generator/",
+      "github_link": "https://github.com/zacharybaca/quote-generator",
+      "image_urls": [
+        "/images/quote-generator/landing-page.png",
+        "/images/quote-generator/screen2.png",
+        "/images/quote-generator/screen3.png"
+      ]
+    },
+    {
+      "id": 5,
+      "project_name": "Email Campaign Design",
+      "description": "A Photoshop Design File That I Converted to a Webpage",
+      "technologies": ["HTML", "CSS"],
+      "live_link": "https://zacharybaca.github.io/email-campaign-responsive/",
+      "github_link": "https://github.com/zacharybaca/email-campaign-responsive",
+      "image_urls": [
+        "/images/email-campaign/landing_page.png",
+        "/images/email-campaign/landing_page2.png"
+      ]
+    },
+    {
+      "id": 6,
+      "project_name": "School Course Catalog",
+      "description": "This project is a full-stack web application that allows users to manage their own courses and view courses created by others. Each user can create, read, update, and delete their own courses, but can only view courses created by other users without the ability to modify or delete them. The application also features a secure sign-up and login system using email and password authentication. Form validation is implemented to ensure data integrity, with error messages displayed for incorrect or missing input, guiding users to correct their mistakes.",
+      "technologies": [
+        "JavaScript",
+        "ReactJS",
+        "ExpressJS",
+        "Sequelize",
+        "SQLite",
+        "React Context API",
+        "Basic Auth"
+      ],
+      "live_link": "https://school-course-catalog-front-end-production.up.railway.app/",
+      "github_link": "https://github.com/zacharybaca/school-course-fullstack-app",
+      "image_urls": [
+        "/images/course-catalog/landing_page.png",
+        "/images/course-catalog/sign_up.png",
+        "/images/course-catalog/create_course.png",
+        "/images/course-catalog/update_course.png"
+      ]
+    },
+    {
+      "id": 7,
+      "project_name": "Axios Todo List",
+      "description": "This is a to-do list web application built with vanilla JavaScript and Axios for API calls. Users can add tasks by providing a title, price, description, and an image URL to help visually identify each task. The application allows users to edit or delete tasks seamlessly. Changes such as adding, editing, or deleting tasks are reflected in real-time, eliminating the need for page refreshes.",
+      "technologies": ["HTML", "CSS", "JavaScript", "Axios", "NodeJS"],
+      "live_link": "https://zacharybaca.github.io/axios-todo-list/",
+      "github_link": "https://github.com/zacharybaca/axios-todo-list",
+      "image_urls": [
+        "/images/axios-todo-list/main-screen.png",
+        "/images/axios-todo-list/main-screen-2.png",
+        "/images/axios-todo-list/completed-screen.png"
+      ]
+    },
+    {
+      "id": 8,
+      "project_name": "Name Badge",
+      "description": "This React web application generates a name badge based on user input from a form. The form includes validation to ensure proper character limits and correct phone number formatting. The submit button remains disabled until all required fields are filled, ensuring complete input before submission.",
+      "technologies": ["HTML", "CSS", "JavaScript", "JSX", "React"],
+      "live_link": "https://zacharybaca.github.io/name-badge/",
+      "github_link": "https://github.com/zacharybaca/name-badge",
+      "image_urls": [
+        "/images/name-badge/main-screen.png",
+        "/images/name-badge/add-screen.png",
+        "/images/name-badge/submit-screen.png"
+      ]
+    },
+    {
+      "id": 9,
+      "project_name": "Meme Generator",
+      "description": "This React web application integrates a third-party API to fetch random memes. Users can preview the meme and customize it by adding text to the top and bottom. Once saved, the meme appears at the bottom of the page, and the input fields are automatically cleared. Users can also edit or delete saved memes for further customization.",
+      "technologies": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "JSX",
+        "React",
+        "NodeJS",
+        "Fetch API"
+      ],
+      "live_link": "https://zacharybaca.github.io/meme-generator/",
+      "github_link": "https://github.com/zacharybaca/meme-generator",
+      "image_urls": [
+        "/images/meme-generator/main-screen.png",
+        "/images/meme-generator/creation-screen.png",
+        "/images/meme-generator/saved-screen.png"
+      ]
+    },
+    {
+      "id": 10,
+      "project_name": "CSS Gradient Tool Generator",
+      "description": "This application, built with React, features a preview box where users can create and visualize color gradients in real-time. Users can add a third color to the gradient by clicking the plus button. Once satisfied with the gradient, they can easily copy the generated code with a single click for use elsewhere.",
+      "technologies": ["HTML", "CSS", "JavaScript", "JSX", "React"],
+      "live_link": "https://zacharybaca.github.io/css-gradient-tool/",
+      "github_link": "https://github.com/zacharybaca/css-gradient-tool",
+      "image_urls": [
+        "/images/CSS-Gradient-Tool/main-screen.png",
+        "/images/CSS-Gradient-Tool/creation-screen.png"
+      ]
+    },
+    {
+      "id": 11,
+      "project_name": "Ugly Things Tracker List",
+      "description": "This React application features three input fields that users must complete before the submit button becomes active. Upon submission, the created Ugly Thing is displayed in a scrollable list. The application's state is powered by data from a third-party API, with local state management handled using React's built-in Context API.",
+      "technologies": [
+        "HTML",
+        "CSS",
+        "Bootstrap",
+        "JavaScript",
+        "JSX",
+        "React",
+        "Fetch API",
+        "Context API"
+      ],
+      "live_link": "https://zacharybaca.github.io/ugly-things/",
+      "github_link": "https://github.com/zacharybaca/ugly-things",
+      "image_urls": [
+        "/images/ugly-things/landing-page.png",
+        "/images/ugly-things/scrollable-items-page.png",
+        "/images/ugly-things/update-item-box.png"
+      ]
+    },
+    {
+      "id": 12,
+      "project_name": "Secure Password Generator",
+      "description": "This web application checks whether the user's entered password is secure. If it's not, a button appears, allowing the user to generate a secure password. Users can customize the criteria for the generated password. Once a new password is created, the application offers the option to generate a QR code containing the password for easy access.",
+      "technologies": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "JSX",
+        "React",
+        "Fetch API",
+        "Context API",
+        "React Router",
+        "Third Party API(s)"
+      ],
+      "live_link": "https://zacharybaca.github.io/password-generator-api-project/#/",
+      "github_link": "https://github.com/zacharybaca/password-generator-api-project",
+      "image_urls": [
+        "/images/secure-password-generator/landing-page.png",
+        "/images/secure-password-generator/generate-password-page.png",
+        "/images/secure-password-generator/secure-password-page.png",
+        "/images/secure-password-generator/results-page.png",
+        "/images/secure-password-generator/qr-code-page.png"
+      ]
+    },
+    {
+      "id": 13,
+      "project_name": "Issue Insight: Software Bug Tracker",
+      "description": "This is a full-stack web application designed for managing software development tasks and tracking bugs. The application allows users to create, assign, and update tasks. It's particularly useful for teams, providing tools to manage tasks between employees and managers.",
+      "technologies": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "JSX",
+        "React",
+        "Fetch API",
+        "Context API",
+        "React Router",
+        "BCryptJS",
+        "JSON Web Token",
+        "ExpressJS",
+        "NodeJS",
+        "MongoDB",
+        "Mongoose",
+        "Web Sockets",
+        "Third Party API(s)"
+      ],
+      "live_link": "https://software-bug-tracker.onrender.com",
+      "github_link": "https://github.com/zacharybaca/software-bug-tracker",
+      "image_urls": [
+        "/images/software-bug-tracker/landing-page.png",
+        "/images/software-bug-tracker/error-dialog.png",
+        "/images/software-bug-tracker/chat-screen.png",
+        "/images/software-bug-tracker/homepage.png",
+        "/images/software-bug-tracker/task-list-page.png",
+        "/images/software-bug-tracker/assigned-tasks-page.png",
+        "/images/software-bug-tracker/unassigned-tasks-page.png",
+        "/images/software-bug-tracker/employee-directory-page.png"
+      ]
+    },
+    {
+      "id": 14,
+      "project_name": "Agent Assist",
+      "description": "AgentAssist is built to enhance the customer support experience by equipping agents with a robust knowledge base of helpful articles. These articles offer clear answers to common customer questions and provide step-by-step guidance for handling processes agents encounter in their daily workflows. The application is currently in development, with additional features planned for future releases.",
+      "technologies": [
+        "React JS",
+        "Vite",
+        "Node JS",
+        "Express JS",
+        "Mongo DB",
+        "JSON Web Tokens"
+      ],
+      "live_link": "To Be Determined",
+      "github_link": "https://github.com/zacharybaca/AgentAssist",
+      "image_urls": [
+        "/images/agent-assist/creation-screen-ipad.jpeg",
+        "/images/agent-assist/creation-screen-iphone.jpeg",
+        "/images/agent-assist/creation-screen-macbook.jpeg"
+      ]
+    },
+    {
+      "id": 15,
+      "project_name": "No Dog Left Behind",
+      "description": "No Dog Left Behind is a responsive, user-friendly front-end application built to connect adoptable dogs in shelters with people looking to provide them a forever home. Created as part of the Fetch Rewards Front-End Developer Interview, this app leverages real-time API data to let users browse, search, and save dog breeds available for adoption.",
+      "technologies": [
+        "React JS",
+        "Vite",
+        "Node JS",
+        "Express JS",
+        "Local Storage for Database",
+        "React-Bootstrap",
+        "UUID",
+        "Font Awesome CDN"
+      ],
+      "live_link": "https://no-dog-left-behind.onrender.com",
+      "github_link": "https://github.com/zacharybaca/no-dog-left-behind",
+      "image_urls": [
+        "/images/no-dog-left-behind/dashboard-ipad.jpeg",
+        "/images/no-dog-left-behind/dashboard-iphone.jpeg",
+        "/images/no-dog-left-behind/dashboard-macbook.jpeg",
+        "/images/no-dog-left-behind/sign-in-ipad.jpeg",
+        "/images/no-dog-left-behind/sign-in-iphone.jpeg",
+        "/images/no-dog-left-behind/sign-in-macbook.jpeg"
+      ]
+    }
+  ]
+}
