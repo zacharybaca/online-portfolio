@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
-import Sidebar from './Sidebar';
+import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
+import Sidebar from "./Sidebar";
 
 const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -11,13 +11,12 @@ const Layout = () => {
     transform: isSidebarOpen ? "translateX(300px)" : "translateX(0px)",
     transition: "transform 0.4s ease-out", // Matching your CSS transition
     minHeight: "100vh", // Ensures the background covers the full height
-    width: "100%"
+    width: "100%",
   };
 
   return (
     // We apply the animation style to this outer div
     <div style={appStyle}>
-
       {/* Sidebar sits at left: -300px (defined in your CSS) */}
       <Sidebar />
 
@@ -30,8 +29,7 @@ const Layout = () => {
               type="button"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)} // Toggles state
               aria-label="Toggle Menu"
-            >
-            </button>
+            ></button>
             <span>Zachary Baca</span>
           </div>
         </div>

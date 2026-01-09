@@ -1,10 +1,10 @@
-import React from 'react';
-import { useParams, Link, Navigate } from 'react-router-dom';
-import data from '../data.json';
+import React from "react";
+import { useParams, Link, Navigate } from "react-router-dom";
+import data from "../data.json";
 
 const ProjectDetail = () => {
   const { id } = useParams();
-  const project = data.projects.find(p => p.id === parseInt(id));
+  const project = data.projects.find((p) => p.id === parseInt(id));
 
   if (!project) {
     return <Navigate to="/not-found" />;
@@ -21,7 +21,6 @@ const ProjectDetail = () => {
 
       <article className="portfolio-projects">
         <div className="inner-wrapper flex-row-wrap two-col">
-
           {/* Left Column: Title and Description */}
           <div className="project-info-box box">
             <h1>{project.project_name}</h1>

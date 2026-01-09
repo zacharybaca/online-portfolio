@@ -1,10 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Honk&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Honk&display=swap");
 
 @font-face {
   font-family: "Stylish";
   /* OLD: url("../fonts/BigelowRules.ttf") */
   /* NEW: */
-  src: local("BigelowRules"),
+  src:
+    local("BigelowRules"),
     url("/fonts/BigelowRules.ttf") format("truetype");
 }
 
@@ -12,7 +13,8 @@
   font-family: "Normal";
   /* OLD: url("../fonts/BilboSwashCaps.ttf") */
   /* NEW: */
-  src: local("BilboSwashCaps"),
+  src:
+    local("BilboSwashCaps"),
     url("/fonts/BilboSwashCaps.ttf") format("truetype");
 }
 
@@ -234,7 +236,7 @@ nav a span {
 
 .qr-image {
   width: 250px;
-  height: 250px;;
+  height: 250px;
   margin-top: 115%;
 }
 
@@ -400,7 +402,7 @@ nav a span {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: #FCF5BD;
+  background: #fcf5bd;
   padding: 1rem;
   box-shadow: 0px 0px 6px 0px #808080b3;
   border-radius: 10px;
@@ -414,7 +416,8 @@ nav a span {
   align-items: center;
 }
 
-.form form input, .form form textarea {
+.form form input,
+.form form textarea {
   border: 1px solid gray;
   border-radius: 5px;
   padding: 5px 10px;

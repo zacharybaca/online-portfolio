@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const ProjectCard = ({ project }) => {
   return (
@@ -11,7 +11,7 @@ const ProjectCard = ({ project }) => {
           src={project.image_urls[0]}
           alt={project.project_name}
         />
-        <h5 style={{ textAlign: 'center', marginTop: '10px' }}>
+        <h5 style={{ textAlign: "center", marginTop: "10px" }}>
           {project.project_name}
         </h5>
       </Link>
