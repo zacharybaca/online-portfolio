@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "format": "prettier --write \"src/**/*.{js,jsx,json,css,md}\"",
-    "test": "vitest"
+    "test": "vitest",
+    "reset": "rm -rf node_modules package-lock.json && npm install"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
