@@ -1,80 +1,61 @@
-import React from "react";
-import { useParams, Link, Navigate } from "react-router-dom";
-import data from "../data.json";
+// src/pages/ProjectDetail.jsx
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
 
 const ProjectDetail = () => {
   const { id } = useParams();
-  const project = data.projects.find((p) => p.id === parseInt(id));
+  const [project, setProject] = useState(null);
 
-  if (!project) {
-    return <Navigate to="/not-found" />;
-  }
+  useEffect(() => {
+    // Fetch specific project by ID
+    // Note: You might need to add a "Get Single Project" route to your backend
+    // Or just filter from the full list if you are caching it.
+    // For now, let's assume you fetch all and find one (easiest for small portfolios)
+    fetch('https://your-app-name.onrender.com/api/projects')
+      .then(res => res.json())
+      .then(data => {
+        const found = data.find(p => p._id === id);
+        setProject(found);
+      })
+      .catch(err => console.error(err));
+  }, [id]);
+
+  if (!project) return <div style={{color:'white', padding:'2rem'}}>Loading...</div>;
 
   return (
-    <>
-      {/* Top Navigation */}
+    <article className="portfolio-about">
       <nav className="nav">
         <Link to="/">
           <span>&larr;</span> Back
         </Link>
       </nav>
-
-      <article className="portfolio-projects">
-        <div className="inner-wrapper flex-row-wrap two-col">
-          {/* Left Column: Title and Description */}
-          <div className="project-info-box box">
-            <h1>{project.project_name}</h1>
-            <p>{project.description}</p>
+      
+      <div className="inner-wrapper">
+        <div className="project-info-box box">
+          <h1 id="project-heading">{project.title}</h1>
+          
+          <div className="project-links" style={{marginBottom: '1rem'}}>
+             {project.repoLink && <a href={project.repoLink} target="_blank" className="btn-link" style={{display:'inline-block', marginRight:'10px'}}>GitHub Repo</a>}
+             {project.demoLink && <a href={project.demoLink} target="_blank" className="btn-link" style={{display:'inline-block'}}>Live Demo</a>}
           </div>
 
-          {/* Right Column: Technologies and Links */}
-          <div className="project-tech-links-box box">
-            <h6>Technologies</h6>
-            <ul className="tech-stack">
-              {project.technologies.map((tech, index) => (
-                <li key={index}>{tech}</li>
-              ))}
-            </ul>
-
-            <a
-              href={project.live_link}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-link"
-            >
-              Live Demo
-            </a>
-            <a
-              href={project.github_link}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-link"
-            >
-              GitHub Repo
-            </a>
-          </div>
-
-          {/* Bottom Area: Images */}
-          <div className="project-img-box box">
-            {project.image_urls.map((img, index) => (
-              <img
-                key={index}
-                className="project-img"
-                src={img}
-                alt={`${project.project_name} screenshot`}
-              />
-            ))}
-          </div>
+          <p>{project.description}</p>
         </div>
 
-        {/* Bottom Navigation */}
-        <nav className="nav">
-          <Link to="/">
-            <span>&larr;</span> Back
-          </Link>
-        </nav>
-      </article>
-    </>
+        {/* GALLERY SECTION */}
+        <div className="project-images box" style={{background: 'transparent', border:'none'}}>
+           {project.imageUrls && project.imageUrls.map((url, index) => (
+             <img 
+               key={index} 
+               src={url} 
+               alt={`${project.title} screenshot ${index + 1}`} 
+               className="project-img" 
+               style={{ marginBottom: '20px', width: '100%' }}
+             />
+           ))}
+        </div>
+      </div>
+    </article>
   );
 };
 
