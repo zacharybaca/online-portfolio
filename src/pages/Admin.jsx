@@ -25,7 +25,7 @@ const Admin = () => {
 
     try {
       // NOTE: Update this URL if you deploy!
-      const response = await fetch('http://localhost:5000/api/projects', {
+      const response = await fetch('https://online-portfolio-tz8x.onrender.com/api/projects', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
