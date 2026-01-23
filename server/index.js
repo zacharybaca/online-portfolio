@@ -1,7 +1,8 @@
 // server/index.js
 
 // 1. FIX: Use this import syntax instead of require('dotenv').config()
-import 'dotenv/config'; 
+import process from 'process';
+import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose'; // Import mongoose as a default
 import cors from 'cors';
@@ -18,7 +19,7 @@ app.use(cors());
 const mongoUri = process.env.MONGO_URI;
 
 if (!mongoUri) {
-  console.error("FATAL ERROR: MONGO_URI is not defined in .env file");
+  console.error('FATAL ERROR: MONGO_URI is not defined in .env file');
   process.exit(1);
 }
 
