@@ -1,4 +1,3 @@
-// src/pages/Admin.jsx
 import React, { useState } from 'react';
 
 const Admin = () => {
@@ -8,8 +7,8 @@ const Admin = () => {
     imageUrl: '',
     repoLink: '',
     demoLink: '',
-    tags: '', // We'll split this string into an array later
-    secret: '', // To prove it's you
+    tags: '',
+    secret: '',
   });
 
   const handleChange = (e) => {
@@ -19,25 +18,25 @@ const Admin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Format the data for the API
     const projectPayload = {
       ...formData,
-      tags: formData.tags.split(',').map((tag) => tag.trim()), // "React, Node" -> ["React", "Node"]
+      tags: formData.tags.split(',').map((tag) => tag.trim()),
     };
 
     try {
+      // NOTE: Update this URL if you deploy!
       const response = await fetch('http://localhost:5000/api/projects', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-admin-secret': formData.secret, // The security key
+          'x-admin-secret': formData.secret,
         },
         body: JSON.stringify(projectPayload),
       });
 
       if (response.ok) {
         alert('Project Added Successfully!');
-        setFormData({ ...formData, title: '', description: '' }); // Reset form
+        setFormData({ ...formData, title: '', description: '' });
       } else {
         alert('Failed: Check your secret key');
       }
@@ -47,15 +46,10 @@ const Admin = () => {
   };
 
   return (
-    <div
-      className="admin-container"
-      style={{ padding: '2rem', maxWidth: '600px', margin: '0 auto' }}
-    >
+    <div className="admin-container">
       <h1>Add New Project</h1>
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-      >
+      {/* Changed style={{...}} to className="admin-form" */}
+      <form onSubmit={handleSubmit} className="admin-form">
         <input
           type="text"
           name="title"
@@ -63,18 +57,23 @@ const Admin = () => {
           onChange={handleChange}
           required
         />
-        <textarea name="description" placeholder="Description" onChange={handleChange} required />
+        <textarea
+          name="description"
+          placeholder="Description"
+          rows="4"
+          onChange={handleChange}
+          required
+        />
         <input type="text" name="imageUrl" placeholder="Image URL" onChange={handleChange} />
         <input type="text" name="repoLink" placeholder="GitHub Repo Link" onChange={handleChange} />
         <input type="text" name="demoLink" placeholder="Live Demo Link" onChange={handleChange} />
         <input
           type="text"
           name="tags"
-          placeholder="Tags (comma separated)"
+          placeholder="Tags (comma separated e.g. React, Node)"
           onChange={handleChange}
         />
 
-        {/* Simple Security Field */}
         <input
           type="password"
           name="secret"
