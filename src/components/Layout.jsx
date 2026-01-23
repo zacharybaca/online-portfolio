@@ -1,23 +1,21 @@
-import React, { useState } from "react";
-import { Outlet } from "react-router-dom";
-import Sidebar from "./Sidebar";
+import React, { useState } from 'react';
+// REMOVED: import { Outlet } from "react-router-dom";
+// We don't need Outlet because you are passing children in App.jsx
+import Sidebar from './Sidebar';
 
-const Layout = () => {
+// 1. ACCEPT 'children' AS A PROP
+const Layout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Replicating the script logic:
-  // Instead of document.body, we transform the main app wrapper.
   const appStyle = {
-    transform: isSidebarOpen ? "translateX(300px)" : "translateX(0px)",
-    transition: "transform 0.4s ease-out", // Matching your CSS transition
-    minHeight: "100vh", // Ensures the background covers the full height
-    width: "100%",
+    transform: isSidebarOpen ? 'translateX(300px)' : 'translateX(0px)',
+    transition: 'transform 0.4s ease-out',
+    minHeight: '100vh',
+    width: '100%',
   };
 
   return (
-    // We apply the animation style to this outer div
     <div style={appStyle}>
-      {/* Sidebar sits at left: -300px (defined in your CSS) */}
       <Sidebar />
 
       <div className="wrapper">
@@ -27,15 +25,15 @@ const Layout = () => {
               id="menu-icon"
               className="menu-icon"
               type="button"
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)} // Toggles state
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               aria-label="Toggle Menu"
             ></button>
             <span>Zachary Baca</span>
           </div>
         </div>
 
-        {/* Page Content */}
-        <Outlet />
+        {/* 2. RENDER THE CHILDREN (This is your Home/Projects content) */}
+        <main className="inner-wrapper">{children}</main>
       </div>
     </div>
   );

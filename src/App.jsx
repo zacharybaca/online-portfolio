@@ -1,41 +1,30 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+// src/App.jsx
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 
-// Import your styles
-import "./index.css"; // Contains your normalize.css
-import "./App.css"; // Contains your styles.css
+import "./index.css";
+import "./App.css";
 
-// Import Layout Component
-import Layout from "./components/Layout";
-
-// Import Page Components
-import Home from "./pages/Home";
-import About from "./pages/About";
-import Admin from "./pages/Admin";
-import ProjectDetail from "./pages/ProjectDetail";
-
-// Simple 404 Component
-const NotFound = () => (
-  <div className="box">
-    <h1>404</h1>
-    <p>Page not found.</p>
-  </div>
-);
+// Component Imports
+import Layout from './components/Layout';
+import Home from './pages/Home';
+import About from './pages/About';
+import ProjectDetail from './pages/ProjectDetail';
+import Admin from './pages/Admin';
 
 function App() {
   return (
-    <BrowserRouter>
+    <Layout>
       <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="about" element={<About />} />
-          <Route path="dashboard" element={<Admin />} />
-          <Route path="project/:id" element={<ProjectDetail />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
 
-          <Route path="*" element={<NotFound />} />
-        </Route>
+        {/* CRITICAL FIX: Add "/:id" to the end of the path */}
+        <Route path="/project/:id" element={<ProjectDetail />} />
+
+        <Route path="/admin" element={<Admin />} />
       </Routes>
-    </BrowserRouter>
+    </Layout>
   );
 }
 
