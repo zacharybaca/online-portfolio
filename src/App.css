@@ -511,3 +511,58 @@ nav a span {
     outline: none;
   }
 }
+
+/* Admin Dashboard Styles */
+.admin-container {
+  max-width: 600px;
+  margin: 4rem auto;
+  padding: 2rem;
+  background-color: var(--card-bg, #1a1a1a); /* Uses your theme var if it exists, or dark fallback */
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.admin-container h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--text-color, #fff);
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.admin-form input,
+.admin-form textarea {
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background-color: #2a2a2a;
+  color: #fff;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.admin-form input:focus,
+.admin-form textarea:focus {
+  outline: 2px solid #646cff; /* Vite/React default purple */
+  border-color: transparent;
+}
+
+.admin-form button {
+  padding: 12px;
+  margin-top: 1rem;
+  background-color: #646cff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.admin-form button:hover {
+  background-color: #535bf2;
+}
