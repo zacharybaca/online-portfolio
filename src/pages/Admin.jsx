@@ -1,14 +1,15 @@
+// src/pages/Admin.jsx
 import React, { useState } from 'react';
 
 const Admin = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    imageUrl: '',
+    imageUrls: '', // CHANGED: Renamed from imageUrl
     repoLink: '',
     demoLink: '',
     tags: '',
-    secret: '',
+    secret: ''
   });
 
   const handleChange = (e) => {
@@ -20,23 +21,26 @@ const Admin = () => {
 
     const projectPayload = {
       ...formData,
-      tags: formData.tags.split(',').map((tag) => tag.trim()),
+      // 1. SPLIT tags into array
+      tags: formData.tags.split(',').map(tag => tag.trim()),
+      // 2. NEW: SPLIT image URLs into array
+      imageUrls: formData.imageUrls.split(',').map(url => url.trim()) 
     };
 
     try {
-      // NOTE: Update this URL if you deploy!
-      const response = await fetch('https://online-portfolio-tz8x.onrender.com/api/projects', {
+      const response = await fetch('https://your-app-name.onrender.com/api/projects', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-admin-secret': formData.secret,
+          'x-admin-secret': formData.secret 
         },
         body: JSON.stringify(projectPayload),
       });
 
       if (response.ok) {
         alert('Project Added Successfully!');
-        setFormData({ ...formData, title: '', description: '' });
+        // Reset form
+        setFormData({ ...formData, title: '', description: '', imageUrls: '', tags: '' }); 
       } else {
         alert('Failed: Check your secret key');
       }
@@ -48,39 +52,24 @@ const Admin = () => {
   return (
     <div className="admin-container">
       <h1>Add New Project</h1>
-      {/* Changed style={{...}} to className="admin-form" */}
       <form onSubmit={handleSubmit} className="admin-form">
-        <input
-          type="text"
-          name="title"
-          placeholder="Project Title"
-          onChange={handleChange}
-          required
+        
+        <input type="text" name="title" placeholder="Project Title" onChange={handleChange} required />
+        <textarea name="description" placeholder="Description" rows="4" onChange={handleChange} required />
+        
+        {/* UPDATED INPUT */}
+        <textarea 
+          name="imageUrls" 
+          placeholder="Image URLs (comma separated)" 
+          rows="3"
+          onChange={handleChange} 
         />
-        <textarea
-          name="description"
-          placeholder="Description"
-          rows="4"
-          onChange={handleChange}
-          required
-        />
-        <input type="text" name="imageUrl" placeholder="Image URL" onChange={handleChange} />
+        
         <input type="text" name="repoLink" placeholder="GitHub Repo Link" onChange={handleChange} />
         <input type="text" name="demoLink" placeholder="Live Demo Link" onChange={handleChange} />
-        <input
-          type="text"
-          name="tags"
-          placeholder="Tags (comma separated e.g. React, Node)"
-          onChange={handleChange}
-        />
-
-        <input
-          type="password"
-          name="secret"
-          placeholder="Admin Secret Key"
-          onChange={handleChange}
-          required
-        />
+        <input type="text" name="tags" placeholder="Tags (comma separated e.g. React, Node)" onChange={handleChange} />
+        
+        <input type="password" name="secret" placeholder="Admin Secret Key" onChange={handleChange} required />
 
         <button type="submit">Add Project</button>
       </form>
