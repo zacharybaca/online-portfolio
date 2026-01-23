@@ -42,3 +42,24 @@ const Home = () => {
 };
 
 export default Home;
+
+// // inside Home.jsx
+// import React, { useEffect, useState } from 'react';
+// // import projects from '../data.json'; // DELETE THIS
+
+// const Home = () => {
+//   const [projects, setProjects] = useState([]);
+
+//   useEffect(() => {
+//     // Fetch from your local backend
+//     fetch('https://online-portfolio-tz8x.onrender.com/api/projects')
+//       .then(res => res.json())
+//       .then(data => setProjects(data))
+//       .catch(err => console.error(err));
+//   }, []);
+
+//   return (
+//     // ... your existing map code ...
+//     // {projects.map((project) => ( <ProjectCard data={project} /> ))}
+//   );
+// };
