@@ -1,23 +1,51 @@
 /* src/App.css */
 @import url("https://fonts.googleapis.com/css2?family=Honk&display=swap");
 
+/* --- 1. THEME VARIABLES --- */
+:root {
+  /* Default (Dark Mode) Variables */
+  --bg-primary: #000000;
+  --bg-secondary: transparent;
+  --text-primary: #ffffff;
+  --text-secondary: #dcdcdc;
+  --text-muted: #999;
+  --border-color: #333;
+  --accent-color: #333;
+  --nav-link: #bbb;
+
+  /* Logo Logic: Invert ON for Dark Mode (turns black text white) */
+  --logo-filter: invert(1);
+  --logo-blend: screen;
+}
+
+/* Light Mode Overrides */
+body.light-mode {
+  --bg-primary: #f4f4f4;       /* Light Gray Background */
+  --bg-secondary: #ffffff;     /* White Cards */
+  --text-primary: #1a1a1a;     /* Nearly Black Text */
+  --text-secondary: #4a4a4a;   /* Dark Gray Text */
+  --text-muted: #666;
+  --border-color: #ccc;        /* Lighter Borders */
+  --accent-color: #e0e0e0;     /* Light Gray Buttons */
+  --nav-link: #555;
+
+  /* Logo Logic: Invert OFF for Light Mode (keeps original black text) */
+  --logo-filter: invert(0);
+  --logo-blend: normal;
+}
+
+/* --- FONTS --- */
 @font-face {
   font-family: "Stylish";
-  src:
-    local("BigelowRules"),
-    url("/fonts/BigelowRules.ttf") format("truetype");
+  src: local("BigelowRules"), url("/fonts/BigelowRules.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Normal";
-  src:
-    local("BilboSwashCaps"),
-    url("/fonts/BilboSwashCaps.ttf") format("truetype");
+  src: local("BilboSwashCaps"), url("/fonts/BilboSwashCaps.ttf") format("truetype");
 }
 
-/*
-  Main styles
-*/
+/* --- GLOBAL STYLES --- */
 * {
   box-sizing: border-box;
 }
@@ -36,15 +64,16 @@ body {
   font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
   font-weight: normal;
   line-height: 1.5;
-  /* DARK MODE FIX: White text, Black background */
-  color: #ffffff;
-  background: #000000;
+
+  /* USE VARIABLES FOR THEME */
+  color: var(--text-primary);
+  background: var(--bg-primary);
+
   transform: translateX(0px);
-  transition: all 0.4s ease-out;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 article {
-  /* DARK MODE FIX: Transparent so black body shows through */
   background: transparent;
 }
 
@@ -62,8 +91,7 @@ h5 {
   letter-spacing: 2.5px;
   -webkit-text-transform: uppercase;
   text-transform: uppercase;
-  /* DARK MODE FIX: Ensure headings are white */
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 h6 {
@@ -71,13 +99,12 @@ h6 {
   -webkit-text-transform: uppercase;
   text-transform: uppercase;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 p {
   font-size: 15px;
-  /* DARK MODE FIX: Light gray for readability */
-  color: #dcdcdc;
+  color: var(--text-secondary);
 }
 
 a {
@@ -89,7 +116,6 @@ a {
   min-width: 320px;
   height: 100%;
   min-height: 100%;
-  /* DARK MODE FIX: Transparent to remove the white box */
   background: transparent;
 }
 
@@ -109,9 +135,8 @@ a {
   width: 100%;
   max-width: 1200px;
   padding: 40px 50px 30px;
-  /* DARK MODE FIX: Transparent background, dark border */
-  background: transparent;
-  border-bottom: 1px solid #333;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .box h1,
@@ -119,63 +144,11 @@ a {
   margin: 0 auto 8px;
 }
 
-.box h6 {
-  font-size: 1rem;
-  font-weight: bolder;
-  letter-spacing: 2px;
-}
-
 .box li {
   font-size: 13px;
 }
 
-/*
-  Sidebar and mobile header
-*/
-nav {
-  width: 100%;
-  padding: 20px;
-  border-bottom: 1px solid #333;
-}
-
-nav a {
-  width: 100%;
-  vertical-align: middle;
-  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  /* DARK MODE FIX: Light gray nav links */
-  color: #bbb;
-}
-
-nav a span {
-  font-weight: bold;
-  font-size: 1.25rem;
-}
-
-#name-heading {
-  font-family: "Stylish";
-  font-size: 50px;
-}
-
-#about-heading {
-  font-family: "Stylish";
-  font-size: 50px;
-}
-
-#title-heading {
-  font-family: "Normal";
-  font-size: 30px;
-}
-
-#project-heading {
-  font-family: "Stylish";
-  font-size: 30px;
-  font-weight: 800;
-}
-
+/* --- SIDEBAR --- */
 .sidebar {
   position: absolute;
   top: 0;
@@ -186,7 +159,9 @@ nav a span {
   height: 100%;
   min-height: 100%;
   padding: 20px;
-  background: #000;
+  background: var(--bg-primary);
+  border-right: 1px solid var(--border-color);
+  transition: background 0.3s ease;
 }
 
 .sidebar-info-box {
@@ -200,57 +175,74 @@ nav a span {
 .sidebar .thumbnail {
   width: 100%;
   max-width: 250px;
-  border: 4px solid #333;
+  border: 4px solid var(--border-color);
 }
 
+/* --- LOGO SECTION (LARGE) --- */
 .logo-container {
   display: flex;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 40px;
+  margin-bottom: 30px;
   animation-duration: 3s;
   animation-name: slidein;
 }
 
 .logo-image {
-  width: 20%;
-  height: 20%;
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 20px;
+  border: 4px solid #ffffff33;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+.logo-text {
+  height: 100px;
+  width: auto;
+  border-radius: 8px;
+  display: block;
+
+  /* Dynamic Filter for Dark/Light Mode */
+  filter: var(--logo-filter);
+  mix-blend-mode: var(--logo-blend);
+}
+
+/* --- TOGGLE BUTTON --- */
+.theme-toggle-btn {
+  display: block;
+  margin: 0 auto 20px auto;
+  padding: 8px 16px;
+  background: var(--accent-color);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* --- QR CODE (FIXED SIZE) --- */
+.qr-image {
+  display: block;
+  width: 150px;           /* Fixed to manageable size */
+  height: 150px;
+  margin: 20px auto 0;    /* Centered with top spacing */
+  border: 4px solid var(--border-color);
   border-radius: 10px;
 }
 
-.slogan-header {
-  animation-duration: 3s;
-  animation-name: slidein;
-}
-
-.intro-para {
-  animation-duration: 3s;
-  animation-name: slidein;
-}
-
-@keyframes slidein {
-  from {
-    translate: 150vw 0;
-    scale: 200% 1;
-  }
-
-  to {
-    translate: 0 0;
-    scale: 100% 1;
-  }
-}
-
-.qr-image {
-  width: 250px;
-  height: 250px;
-  margin-top: 115%;
-}
-
+/* Sidebar Text */
 .dev-intro-box {
   padding: 10px;
 }
 
 .sidebar h5 {
-  color: #fefefe;
+  color: var(--text-primary);
   margin: 0 auto 0.5rem;
 }
 
@@ -258,7 +250,7 @@ nav a span {
   text-rendering: optimizeLegibility;
   line-height: 1.6;
   font-size: 14px;
-  color: #999;
+  color: var(--text-muted);
 }
 
 .sidebar a {
@@ -267,16 +259,39 @@ nav a span {
   font-size: 13px;
   letter-spacing: 2.5px;
   text-transform: uppercase;
-  color: #555;
+  color: var(--nav-link);
+}
+
+/* --- NAV & HEADER --- */
+nav {
+  width: 100%;
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+nav a {
+  width: 100%;
+  vertical-align: middle;
+  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--nav-link);
+}
+
+nav a span {
+  font-weight: bold;
+  font-size: 1.25rem;
 }
 
 .header {
   vertical-align: middle;
-  color: #fefefe;
+  color: var(--text-primary);
   height: 40px;
   padding: 0.5rem;
-  background: #0a0a0a;
-  border-left: 1px solid #0a0a0a;
+  background: var(--bg-primary);
+  border-left: 1px solid var(--bg-primary);
 }
 
 .header span {
@@ -292,11 +307,11 @@ nav a span {
   width: 20px;
   height: 16px;
   border: none;
-  background: #0a0a0a;
+  background: var(--bg-primary);
   margin-top: 3px;
   margin-right: 10px;
-  border-top: 2px solid #fefefe;
-  border-bottom: 2px solid #fefefe;
+  border-top: 2px solid var(--text-primary);
+  border-bottom: 2px solid var(--text-primary);
 }
 
 .header button:after {
@@ -306,12 +321,10 @@ nav a span {
   left: 0;
   width: 20px;
   height: 2px;
-  background: #fefefe;
+  background: var(--text-primary);
 }
 
-/*
-  Home page styles
-*/
+/* --- HOME PAGE --- */
 .portfolio-intro {
   max-width: 1200px;
   padding: 40px 50px 30px;
@@ -324,10 +337,8 @@ nav a span {
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings:
-    "MORF" 15,
-    "SHLN" 50;
-  color: #ffffff;
+  font-variation-settings: "MORF" 15, "SHLN" 50;
+  color: var(--text-primary);
 }
 
 .portfolio-intro p {
@@ -335,7 +346,7 @@ nav a span {
   font-size: 125%;
   margin: 0 auto;
   padding-bottom: 40px;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .projects-box h5 {
@@ -344,8 +355,7 @@ nav a span {
   font-size: 13px;
   letter-spacing: 2.25px;
   text-transform: uppercase;
-  /* DARK MODE FIX: Make project titles visible */
-  color: #ffffff;
+  color: var(--text-primary);
   margin: 0 auto 8px;
 }
 
@@ -361,14 +371,11 @@ nav a span {
 .cell img {
   width: 100%;
   min-width: 100px;
-  /* DARK MODE FIX: Dark border for images */
-  border: 4px solid #333;
+  border: 4px solid var(--border-color);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
-/*
-  About and project pages styles
-*/
+/* --- ABOUT & PROJECT PAGES --- */
 .about-intro-box p,
 .project-info-box p {
   font-size: 125%;
@@ -387,68 +394,108 @@ nav a span {
   width: 100%;
   max-width: 1065px;
   margin-bottom: 15px;
-  border: 4px solid #333;
+  border: 4px solid var(--border-color);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .btn-link {
   display: block;
   text-align: center;
-  color: #fefefe;
+  color: #fff; /* Always white text for buttons */
   width: 100%;
   max-width: 255px;
   margin: auto 0 5px 0;
   padding: 0.85em 1em;
-  background-color: #333;
+  background-color: #333; /* Always dark button background */
   border: 1px solid transparent;
 }
 
-/* Form Styles */
+/* --- FORM STYLES --- */
 .form {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: #fcf5bd;
-  padding: 1rem;
-  box-shadow: 0px 0px 6px 0px #808080b3;
+  /* Dark semi-transparent background */
+  background: rgba(125, 125, 125, 0.1);
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   border-radius: 10px;
-  border: 2px solid black;
+  border: 1px solid var(--border-color);
+  margin-top: 2rem;
 }
 
 .form form {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
+}
+
+.form form label {
+  align-self: flex-start;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  color: var(--text-secondary);
+  font-weight: 600;
 }
 
 .form form input,
 .form form textarea {
-  border: 1px solid gray;
+  width: 100%;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   border-radius: 5px;
-  padding: 5px 10px;
-  font-size: 20px;
+  padding: 10px;
+  font-size: 1rem;
   outline: none;
+  font-family: inherit;
+  transition: border-color 0.3s;
 }
 
-.form form label {
-  margin-top: 7px;
+.form form input:focus,
+.form form textarea:focus {
+  border-color: #888;
 }
 
 .form button {
-  margin-top: 10px;
-  padding: 4px 10px;
+  margin-top: 20px;
+  padding: 12px;
   font-size: 1rem;
-  border: 1px solid gray;
-  border-radius: 7px;
-  outline: none;
+  font-weight: bold;
+  background-color: var(--accent-color);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-/*
-  Tablet layout styles
-*/
+.form button:hover {
+  filter: brightness(1.2);
+}
+
+/* --- ANIMATIONS --- */
+@keyframes slidein {
+  from {
+    translate: 150vw 0;
+    scale: 200% 1;
+  }
+  to {
+    translate: 0 0;
+    scale: 100% 1;
+  }
+}
+
+.slogan-header,
+.intro-para,
+.logo-container {
+  animation-duration: 3s;
+  animation-name: slidein;
+}
+
+/* --- MEDIA QUERIES --- */
+/* Tablet */
 @media screen and (min-width: 768px) {
   .sidebar h5 {
     font-size: 1.25rem;
@@ -485,9 +532,7 @@ nav a span {
   }
 }
 
-/*
-  Desktop layout styles
-*/
+/* Desktop */
 @media screen and (min-width: 1024px) {
   .sidebar {
     left: 0;
@@ -507,69 +552,12 @@ nav a span {
   }
 }
 
-/*
-  Mobile layout styles
-*/
+/* Mobile */
 @media screen and (max-width: 390px) {
   .form form textarea {
-    border: 1px solid gray;
+    border: 1px solid var(--border-color);
     border-radius: 5px;
     font-size: 13px;
     outline: none;
   }
-}
-
-/* Admin Dashboard Styles */
-.admin-container {
-  max-width: 600px;
-  margin: 4rem auto;
-  padding: 2rem;
-  background-color: var(--card-bg, #1a1a1a);
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-.admin-container h1 {
-  text-align: center;
-  margin-bottom: 2rem;
-  color: var(--text-color, #fff);
-}
-
-.admin-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-}
-
-.admin-form input,
-.admin-form textarea {
-  padding: 12px;
-  border-radius: 4px;
-  border: 1px solid #444;
-  background-color: #2a2a2a;
-  color: #fff;
-  font-family: inherit;
-  font-size: 1rem;
-}
-
-.admin-form input:focus,
-.admin-form textarea:focus {
-  outline: 2px solid #646cff;
-  border-color: transparent;
-}
-
-.admin-form button {
-  padding: 12px;
-  margin-top: 1rem;
-  background-color: #646cff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.admin-form button:hover {
-  background-color: #535bf2;
 }

@@ -45,10 +45,14 @@ const Home = () => {
       <div className="portfolio-project-thumbs">
         <div className="projects-box">
           <div className="grid">
-            {loading && <p style={{ color: 'white' }}>Loading Projects...</p>}
+            {/* FIX: Use theme variable instead of 'white' */}
+            {loading && (
+              <p style={{ color: 'var(--text-primary)', padding: '1rem' }}>Loading Projects...</p>
+            )}
 
+            {/* FIX: Use theme variable instead of 'white' */}
             {!loading && projects.length === 0 && (
-              <p style={{ color: 'white' }}>
+              <p style={{ color: 'var(--text-primary)', padding: '1rem' }}>
                 No projects found. (Check if your backend is running!)
               </p>
             )}
