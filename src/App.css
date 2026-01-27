@@ -1,5 +1,5 @@
 /* src/App.css */
-@import url("https://fonts.googleapis.com/css2?family=Honk&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Honk&display=swap');
 
 /* --- 1. THEME VARIABLES --- */
 :root {
@@ -20,13 +20,13 @@
 
 /* Light Mode Overrides */
 body.light-mode {
-  --bg-primary: #f4f4f4;       /* Light Gray Background */
-  --bg-secondary: #ffffff;     /* White Cards */
-  --text-primary: #1a1a1a;     /* Nearly Black Text */
-  --text-secondary: #4a4a4a;   /* Dark Gray Text */
+  --bg-primary: #f4f4f4; /* Light Gray Background */
+  --bg-secondary: #ffffff; /* White Cards */
+  --text-primary: #1a1a1a; /* Nearly Black Text */
+  --text-secondary: #4a4a4a; /* Dark Gray Text */
   --text-muted: #666;
-  --border-color: #ccc;        /* Lighter Borders */
-  --accent-color: #e0e0e0;     /* Light Gray Buttons */
+  --border-color: #ccc; /* Lighter Borders */
+  --accent-color: #e0e0e0; /* Light Gray Buttons */
   --nav-link: #555;
 
   /* Logo Logic: Invert OFF for Light Mode (keeps original black text) */
@@ -36,18 +36,24 @@ body.light-mode {
 
 /* --- FONTS --- */
 @font-face {
-  font-family: "Stylish";
-  src: local("BigelowRules"), url("/fonts/BigelowRules.ttf") format("truetype");
+  font-family: 'Stylish';
+  src:
+    local('BigelowRules'),
+    url('/fonts/BigelowRules.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: "Normal";
-  src: local("BilboSwashCaps"), url("/fonts/BilboSwashCaps.ttf") format("truetype");
+  font-family: 'Normal';
+  src:
+    local('BilboSwashCaps'),
+    url('/fonts/BilboSwashCaps.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: "Modern";
-  src: local("Audiowide-Regular"), url("/fonts/Audiowide-Regular.ttf") format("truetype");
+  font-family: 'Modern';
+  src:
+    local('Audiowide-Regular'),
+    url('/fonts/Audiowide-Regular.ttf') format('truetype');
 }
 
 /* --- GLOBAL STYLES --- */
@@ -66,7 +72,7 @@ body {
 
 body {
   position: relative;
-  font-family: "Modern", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+  font-family: 'Modern', 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;
   font-weight: normal;
   line-height: 1.5;
 
@@ -75,7 +81,9 @@ body {
   background: var(--bg-primary);
 
   transform: translateX(0px);
-  transition: background 0.3s ease, color 0.3s ease;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
 }
 
 article {
@@ -88,11 +96,11 @@ h3,
 h4,
 h5,
 p {
-  font-family: "Modern", "Merriweather", serif;
+  font-family: 'Modern', 'Merriweather', serif;
 }
 
 h5 {
-  font-family: "Modern", "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Modern', 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   letter-spacing: 2.5px;
   -webkit-text-transform: uppercase;
   text-transform: uppercase;
@@ -237,9 +245,9 @@ a {
 /* --- QR CODE (FIXED SIZE) --- */
 .qr-image {
   display: block;
-  width: 150px;           /* Fixed to manageable size */
+  width: 150px; /* Fixed to manageable size */
   height: 150px;
-  margin: 20px auto 0;    /* Centered with top spacing */
+  margin: 20px auto 0; /* Centered with top spacing */
   border: 4px solid var(--border-color);
   border-radius: 10px;
 }
@@ -262,7 +270,7 @@ a {
 }
 
 .sidebar a {
-  font-family: "Modern", "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Modern', 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 600;
   font-size: 13px;
   letter-spacing: 2.5px;
@@ -280,7 +288,7 @@ nav {
 nav a {
   width: 100%;
   vertical-align: middle;
-  font-family: "Modern", "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Modern', 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 600;
   font-size: 13px;
   letter-spacing: 2.5px;
@@ -323,7 +331,7 @@ nav a span {
 }
 
 .header button:after {
-  content: "";
+  content: '';
   position: absolute;
   top: 40%;
   left: 0;
@@ -341,11 +349,13 @@ nav a span {
 .portfolio-intro h1 {
   font-size: 1.5rem;
   margin: 0 auto 8px;
-  font-family: "Modern", "Honk", system-ui;
+  font-family: 'Modern', 'Honk', system-ui;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings: "MORF" 15, "SHLN" 50;
+  font-variation-settings:
+    'MORF' 15,
+    'SHLN' 50;
   color: var(--text-primary);
 }
 
@@ -358,7 +368,7 @@ nav a span {
 }
 
 .projects-box h5 {
-  font-family: "Modern", "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Modern', 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 500;
   font-size: 13px;
   letter-spacing: 2.25px;

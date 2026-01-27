@@ -2,8 +2,8 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-import "./index.css";
-import "./App.css";
+import './index.css';
+import './App.css';
 
 // Component Imports
 import Layout from './components/Layout';
