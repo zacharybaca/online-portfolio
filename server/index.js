@@ -6,6 +6,14 @@ import 'dotenv/config';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import multer from 'multer'; // Handles file uploads
+import fs from 'fs'; // Handles file system (creating folders)
+import path from 'path'; // Handles file paths
+import { fileURLToPath } from 'url';
+
+// FIX: Recreate __dirname for ES Modules (it doesn't exist by default)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const { connect, Schema, model } = mongoose;
 const app = express();
@@ -13,6 +21,39 @@ const app = express();
 // 2. MIDDLEWARE
 app.use(express.json());
 app.use(cors());
+
+// --- MULTER CONFIGURATION (For File Uploads) ---
+// Helper to clean project names for folders (e.g. "My App" -> "my-app")
+const sanitizeName = (name) => {
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '-');
+};
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // Define path: Go up one level from 'server' folder, then into 'public/images/projects'
+    const folderName = sanitizeName(req.body.title || 'untitled-project');
+    const uploadPath = path.join(__dirname, '../public/images/projects', folderName);
+
+    // Create the folder if it doesn't exist
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+
+    cb(null, uploadPath);
+  },
+  filename: function (req, file, cb) {
+    // Create unique filename to prevent overwriting
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const cleanFileName = file.originalname.replace(/[^a-zA-Z0-9.]/g, '_');
+    cb(null, uniqueSuffix + '-' + cleanFileName);
+  },
+});
+
+const upload = multer({ storage: storage });
+// ----------------------------------------------
 
 // 3. CONNECT TO MONGODB
 const mongoUri = process.env.MONGO_URI;
@@ -30,11 +71,16 @@ connect(mongoUri)
 const projectSchema = new Schema({
   title: String,
   description: String,
-  // UPDATED: Changed from single string to Array of Strings
   imageUrls: [String],
   tags: [String],
   repoLink: String,
   demoLink: String,
+  // NEW FIELD: Status for "In Progress" section
+  status: {
+    type: String,
+    enum: ['completed', 'in-progress'],
+    default: 'completed',
+  },
 });
 
 const Project = model('Project', projectSchema);
@@ -51,16 +97,35 @@ app.get('/api/projects', async (req, res) => {
   }
 });
 
-// POST: Add a new project
-app.post('/api/projects', async (req, res) => {
+// POST: Add a new project (Handles Text + Files)
+// 'images' must match the name used in your Admin.jsx FormData
+app.post('/api/projects', upload.array('images', 5), async (req, res) => {
   // Security Check
   if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
     return res.status(403).json({ message: 'Unauthorized' });
   }
 
   try {
-    // The body will now contain { title, ..., imageUrls: ["url1", "url2"] }
-    const newProject = new Project(req.body);
+    const { title, description, tags, repoLink, demoLink, status } = req.body;
+
+    // Convert uploaded file objects into URL strings for the DB
+    const imageUrls = req.files.map((file) => {
+      const folderName = sanitizeName(title || 'untitled-project');
+      // This is the path the frontend will use to find the image
+      return `/images/projects/${folderName}/${file.filename}`;
+    });
+
+    const newProject = new Project({
+      title,
+      description,
+      // Parse tags string ("react, node") into Array ["react", "node"]
+      tags: tags ? tags.split(',').map((t) => t.trim()) : [],
+      imageUrls,
+      repoLink,
+      demoLink,
+      status: status || 'completed',
+    });
+
     await newProject.save();
     res.json(newProject);
   } catch (error) {

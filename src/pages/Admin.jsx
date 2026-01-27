@@ -1,120 +1,144 @@
 import React, { useState } from 'react';
 
 const Admin = () => {
+  // We use a single object for text inputs
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    imageUrls: '',
+    tags: '',
     repoLink: '',
     demoLink: '',
-    tags: '',
-    secret: '',
+    status: 'completed', // Default status
   });
 
-  const handleChange = (e) => {
+  // We use a separate state for files
+  const [files, setFiles] = useState([]);
+  const [message, setMessage] = useState('');
+
+  const handleTextChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e) => {
+    setFiles(e.target.files); // Stores the FileList object
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage('Uploading...');
 
-    // Prepare the data
-    const projectPayload = {
-      ...formData,
-      tags: formData.tags.split(',').map((tag) => tag.trim()),
-      imageUrls: formData.imageUrls.split(',').map((url) => url.trim()),
-    };
+    // 1. Create FormData object
+    const data = new FormData();
+
+    // 2. Append text fields
+    // CRITICAL: Append 'title' FIRST so Multer can name the folder correctly
+    data.append('title', formData.title);
+    data.append('description', formData.description);
+    data.append('tags', formData.tags);
+    data.append('repoLink', formData.repoLink);
+    data.append('demoLink', formData.demoLink);
+    data.append('status', formData.status);
+
+    // 3. Append files
+    // The key 'images' must match upload.array('images') in backend
+    for (let i = 0; i < files.length; i++) {
+      data.append('images', files[i]);
+    }
 
     try {
-      // AUTOMATIC URL SWITCHING
       const apiUrl = import.meta.env.VITE_API_URL;
-
-      const response = await fetch(`${apiUrl}/api/projects`, {
+      const res = await fetch(`${apiUrl}/api/projects`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-secret': formData.secret,
-        },
-        body: JSON.stringify(projectPayload),
+        body: data, // No JSON.stringify, no Content-Type header (browser sets it)
       });
 
-      if (response.ok) {
-        alert('Project Added Successfully!');
+      if (res.ok) {
+        setMessage('Project added successfully!');
+        // Reset form
         setFormData({
-          ...formData,
           title: '',
           description: '',
-          imageUrls: '',
           tags: '',
+          repoLink: '',
+          demoLink: '',
+          status: 'completed',
         });
+        setFiles([]);
       } else {
-        alert('Failed: Check your secret key');
+        setMessage('Error creating project');
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Error: Could not connect to server');
+      console.error(error);
+      setMessage('Server error');
     }
   };
 
   return (
     <div className="admin-container">
       <h1>Add New Project</h1>
-      <form onSubmit={handleSubmit} className="admin-form">
-        <input
-          type="text"
-          name="title"
-          placeholder="Project Title"
-          onChange={handleChange}
-          value={formData.title}
-          required
-        />
-        <textarea
-          name="description"
-          placeholder="Description"
-          rows="4"
-          onChange={handleChange}
-          value={formData.description}
-          required
-        />
-        <textarea
-          name="imageUrls"
-          placeholder="Image URLs (comma separated)"
-          rows="3"
-          onChange={handleChange}
-          value={formData.imageUrls}
-        />
-        <input
-          type="text"
-          name="repoLink"
-          placeholder="GitHub Repo Link"
-          onChange={handleChange}
-          value={formData.repoLink}
-        />
-        <input
-          type="text"
-          name="demoLink"
-          placeholder="Live Demo Link"
-          onChange={handleChange}
-          value={formData.demoLink}
-        />
-        <input
-          type="text"
-          name="tags"
-          placeholder="Tags (comma separated e.g. React, Node)"
-          onChange={handleChange}
-          value={formData.tags}
-        />
+      <div className="form" style={{ marginTop: 0 }}>
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
+          <label>Project Title:</label>
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleTextChange}
+            required
+          />
 
-        <input
-          type="password"
-          name="secret"
-          placeholder="Admin Secret Key"
-          onChange={handleChange}
-          required
-        />
+          <label>Status:</label>
+          <select
+            name="status"
+            value={formData.status}
+            onChange={handleTextChange}
+            style={{ padding: '10px', borderRadius: '5px', width: '100%' }}
+          >
+            <option value="completed">Completed Project</option>
+            <option value="in-progress">In Progress (Currently Working On)</option>
+          </select>
 
-        <button type="submit">Add Project</button>
-      </form>
+          <label>Description:</label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleTextChange}
+            rows="4"
+            required
+          />
+
+          <label>Tags (comma separated):</label>
+          <input
+            type="text"
+            name="tags"
+            placeholder="React, MongoDB, API"
+            value={formData.tags}
+            onChange={handleTextChange}
+          />
+
+          <label>Project Images (Select multiple):</label>
+          <input type="file" name="images" multiple accept="image/*" onChange={handleFileChange} />
+
+          <label>GitHub Repo Link:</label>
+          <input
+            type="text"
+            name="repoLink"
+            value={formData.repoLink}
+            onChange={handleTextChange}
+          />
+
+          <label>Live Demo Link:</label>
+          <input
+            type="text"
+            name="demoLink"
+            value={formData.demoLink}
+            onChange={handleTextChange}
+          />
+
+          <button type="submit">Upload Project</button>
+        </form>
+        {message && <p style={{ marginTop: '1rem', color: 'var(--text-primary)' }}>{message}</p>}
+      </div>
     </div>
   );
 };

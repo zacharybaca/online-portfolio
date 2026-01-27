@@ -6,61 +6,66 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // AUTOMATIC URL SWITCHING
     const apiUrl = import.meta.env.VITE_API_URL;
-
     fetch(`${apiUrl}/api/projects`)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`Server Error: ${res.status}`);
-        }
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data)) {
-          setProjects(data);
-        } else {
-          console.error('Data received is not an array:', data);
-          setProjects([]);
-        }
+        if (Array.isArray(data)) setProjects(data);
         setLoading(false);
       })
       .catch((err) => {
-        console.error('Error fetching projects:', err);
-        setProjects([]);
+        console.error(err);
         setLoading(false);
       });
   }, []);
+
+  // Filter projects into two categories
+  // Note: We check if status is MISSING (old projects) and treat them as completed
+  const completedProjects = projects.filter((p) => !p.status || p.status === 'completed');
+  const inProgressProjects = projects.filter((p) => p.status === 'in-progress');
+
+  if (loading)
+    return <div style={{ color: 'var(--text-primary)', padding: '2rem' }}>Loading...</div>;
 
   return (
     <>
       <article className="portfolio-intro">
         <h1>Hi, I'm Zach.</h1>
-        <p>
-          I am a Software Engineer based in La Porte, IN, specializing in the MERN stack. Below are
-          some of the projects I have built to demonstrate my skills in Full Stack Development.
-        </p>
+        <p>I am a Software Engineer based in La Porte, IN, specializing in the MERN stack.</p>
       </article>
 
       <div className="portfolio-project-thumbs">
         <div className="projects-box">
-          <div className="grid">
-            {/* FIX: Use theme variable instead of 'white' */}
-            {loading && (
-              <p style={{ color: 'var(--text-primary)', padding: '1rem' }}>Loading Projects...</p>
-            )}
+          {/* SECTION 1: COMPLETED PROJECTS */}
+          {completedProjects.length > 0 && (
+            <>
+              <h2 style={{ color: 'var(--text-primary)', margin: '1rem 0' }}>Completed Projects</h2>
+              <div className="grid">
+                {completedProjects.map((project) => (
+                  <ProjectCard key={project._id} data={project} />
+                ))}
+              </div>
+            </>
+          )}
 
-            {/* FIX: Use theme variable instead of 'white' */}
-            {!loading && projects.length === 0 && (
-              <p style={{ color: 'var(--text-primary)', padding: '1rem' }}>
-                No projects found. (Check if your backend is running!)
-              </p>
-            )}
+          {/* SECTION 2: IN PROGRESS */}
+          {inProgressProjects.length > 0 && (
+            <>
+              {/* Add a separator line if we have both sections */}
+              {completedProjects.length > 0 && (
+                <hr style={{ margin: '3rem 0', borderColor: 'var(--border-color)' }} />
+              )}
 
-            {projects.map((project) => (
-              <ProjectCard key={project._id} data={project} />
-            ))}
-          </div>
+              <h2 style={{ color: 'var(--text-primary)', margin: '1rem 0' }}>
+                🚧 Currently In Progress
+              </h2>
+              <div className="grid">
+                {inProgressProjects.map((project) => (
+                  <ProjectCard key={project._id} data={project} />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>
