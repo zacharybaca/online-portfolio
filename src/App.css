@@ -88,11 +88,11 @@ h3,
 h4,
 h5,
 p {
-  font-family: "Merriweather", serif;
+  font-family: "Modern", "Merriweather", serif;
 }
 
 h5 {
-  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Modern", "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
   letter-spacing: 2.5px;
   -webkit-text-transform: uppercase;
   text-transform: uppercase;
@@ -262,7 +262,7 @@ a {
 }
 
 .sidebar a {
-  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Modern", "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 600;
   font-size: 13px;
   letter-spacing: 2.5px;
@@ -280,7 +280,7 @@ nav {
 nav a {
   width: 100%;
   vertical-align: middle;
-  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Modern", "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 600;
   font-size: 13px;
   letter-spacing: 2.5px;
@@ -341,7 +341,7 @@ nav a span {
 .portfolio-intro h1 {
   font-size: 1.5rem;
   margin: 0 auto 8px;
-  font-family: "Honk", system-ui;
+  font-family: "Modern", "Honk", system-ui;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
@@ -358,7 +358,7 @@ nav a span {
 }
 
 .projects-box h5 {
-  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Modern", "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 500;
   font-size: 13px;
   letter-spacing: 2.25px;
