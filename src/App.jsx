@@ -11,6 +11,7 @@ import Home from './pages/Home';
 import About from './pages/About';
 import ProjectDetail from './pages/ProjectDetail';
 import Admin from './pages/Admin';
+import EditProject from './pages/EditProject';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/project/:id" element={<ProjectDetail />} />
 
         <Route path="/admin" element={<Admin />} />
+        <Route path="/edit/:id" element={<EditProject />} />
       </Routes>
     </Layout>
   );
