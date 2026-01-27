@@ -125,11 +125,14 @@ a {
   justify-content: space-between;
 }
 
+/* --- GRID LAYOUT FIX --- */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  /* CHANGED: auto-fill keeps columns consistent size even if there's only 1 item */
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   grid-gap: 30px;
 }
+/* ----------------------- */
 
 .box {
   width: 100%;
@@ -528,7 +531,8 @@ nav a span {
   }
 
   .grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    /* CHANGED: auto-fill keeps single items sized correctly */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
 }
 
