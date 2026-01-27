@@ -52,6 +52,7 @@ const storage = multer.diskStorage({
   },
 });
 
+// CHANGED: Using .any() is safer to prevent "Unexpected field" errors
 const upload = multer({ storage: storage });
 // ----------------------------------------------
 
@@ -75,7 +76,7 @@ const projectSchema = new Schema({
   tags: [String],
   repoLink: String,
   demoLink: String,
-  // NEW FIELD: Status for "In Progress" section
+  // Status for "In Progress" section
   status: {
     type: String,
     enum: ['completed', 'in-progress'],
@@ -98,8 +99,8 @@ app.get('/api/projects', async (req, res) => {
 });
 
 // POST: Add a new project (Handles Text + Files)
-// 'images' must match the name used in your Admin.jsx FormData
-app.post('/api/projects', upload.array('images', 5), async (req, res) => {
+// CHANGED: Uses upload.any() to prevent crashes on file limits
+app.post('/api/projects', upload.any(), async (req, res) => {
   // Security Check
   if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
     return res.status(403).json({ message: 'Unauthorized' });
@@ -109,16 +110,15 @@ app.post('/api/projects', upload.array('images', 5), async (req, res) => {
     const { title, description, tags, repoLink, demoLink, status } = req.body;
 
     // Convert uploaded file objects into URL strings for the DB
-    const imageUrls = req.files.map((file) => {
+    // req.files will exist thanks to upload.any()
+    const imageUrls = (req.files || []).map((file) => {
       const folderName = sanitizeName(title || 'untitled-project');
-      // This is the path the frontend will use to find the image
       return `/images/projects/${folderName}/${file.filename}`;
     });
 
     const newProject = new Project({
       title,
       description,
-      // Parse tags string ("react, node") into Array ["react", "node"]
       tags: tags ? tags.split(',').map((t) => t.trim()) : [],
       imageUrls,
       repoLink,
@@ -134,7 +134,8 @@ app.post('/api/projects', upload.array('images', 5), async (req, res) => {
 });
 
 // PUT: Update an existing project
-app.put('/api/projects/:id', upload.array('images', 5), async (req, res) => {
+// CHANGED: Uses upload.any() to prevent crashes on file limits
+app.put('/api/projects/:id', upload.any(), async (req, res) => {
   // 1. Security Check
   if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
     return res.status(403).json({ message: 'Unauthorized' });
@@ -152,7 +153,7 @@ app.put('/api/projects/:id', upload.array('images', 5), async (req, res) => {
     // 3. Update Text Fields (only if provided)
     if (title) project.title = title;
     if (description) project.description = description;
-    if (tags) project.tags = tags.split(',').map(t => t.trim());
+    if (tags) project.tags = tags.split(',').map((t) => t.trim());
     if (repoLink) project.repoLink = repoLink;
     if (demoLink) project.demoLink = demoLink;
     if (status) project.status = status;
@@ -160,10 +161,15 @@ app.put('/api/projects/:id', upload.array('images', 5), async (req, res) => {
     // 4. Handle NEW Images (Append to existing list)
     if (req.files && req.files.length > 0) {
       const folderName = sanitizeName(project.title || 'untitled-project');
-      const newImageUrls = req.files.map(file => {
+      const newImageUrls = req.files.map((file) => {
         return `/images/projects/${folderName}/${file.filename}`;
       });
-      // Add new images to the existing array
+
+      // --- CRASH FIX: Ensure array exists before pushing ---
+      if (!Array.isArray(project.imageUrls)) {
+        project.imageUrls = [];
+      }
+
       project.imageUrls.push(...newImageUrls);
     }
 
