@@ -25,12 +25,14 @@ const ProjectDetail = () => {
   }, [id]);
 
   if (loading) {
-    return <div style={{ color: 'white', padding: '2rem' }}>Loading Project...</div>;
+    // UPDATED: Use theme variable for Light Mode visibility
+    return <div style={{ color: 'var(--text-primary)', padding: '2rem' }}>Loading Project...</div>;
   }
 
   if (!project) {
     return (
-      <div style={{ color: 'white', padding: '2rem' }}>
+      // UPDATED: Use theme variable for Light Mode visibility
+      <div style={{ color: 'var(--text-primary)', padding: '2rem' }}>
         <h2>Project not found</h2>
         <Link to="/" className="btn-link" style={{ display: 'inline-block', maxWidth: '100px' }}>
           Go Back
@@ -63,17 +65,32 @@ const ProjectDetail = () => {
                 GitHub Repo
               </a>
             )}
+
             {project.demoLink && (
               <a
                 href={project.demoLink}
                 target="_blank"
                 rel="noreferrer"
                 className="btn-link"
-                style={{ display: 'inline-block' }}
+                style={{ display: 'inline-block', marginRight: '10px' }}
               >
                 Live Demo
               </a>
             )}
+
+            {/* --- NEW EDIT BUTTON --- */}
+            <Link
+              to={`/edit/${project._id}`}
+              className="btn-link"
+              style={{
+                display: 'inline-block',
+                background: '#444', // Dark gray to distinguish from main buttons
+                border: '1px solid #666',
+              }}
+            >
+              ⚙️ Edit Project
+            </Link>
+            {/* ----------------------- */}
           </div>
 
           <p>{project.description}</p>
