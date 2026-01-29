@@ -183,30 +183,27 @@ app.put('/api/projects/:id', upload.any(), async (req, res) => {
 app.post('/api/contact', async (req, res) => {
   console.log('--- Contact Form Request Received ---');
 
-  // 1. Debugging: Check if variables are loaded (Don't share this log publicly!)
+  // Debugging logs (Check Render Logs to see these)
   console.log('User:', process.env.EMAIL_USER);
   console.log('To:', process.env.EMAIL_TO);
-  // Do NOT log the password!
+
   const { name, email, message } = req.body;
 
+  // --- UPDATED TRANSPORTER (Port 465 Fix) ---
   const transporter = nodemailer.createTransport({
     host: 'smtp.mail.me.com',
-    port: 587,
-    secure: false, // false uses STARTTLS, which is what iCloud expects on port 587
+    port: 465,
+    secure: true, // true for 465, false for other ports
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
-    tls: {
-      // This is sometimes needed for iCloud to prevent handshake errors
-      ciphers: 'SSLv3',
-      rejectUnauthorized: false,
-    },
+    // No custom 'tls' block needed for Port 465
   });
 
   // 2. Configure the Email Options
   const mailOptions = {
-    from: process.env.EMAIL_USER, // Sender address (MSN)
+    from: process.env.EMAIL_USER, // Sender address (iCloud)
     to: process.env.EMAIL_TO, // Receiver address (Proton Mail)
     replyTo: email, // Reply to the user who filled out the form
     subject: `Portfolio Message from ${name}`,
@@ -222,9 +219,10 @@ app.post('/api/contact', async (req, res) => {
   // 3. Send the Email
   try {
     await transporter.sendMail(mailOptions);
+    console.log('✅ Email sent successfully');
     res.status(200).json({ message: 'Email sent successfully!' });
   } catch (error) {
-    console.error('Email Error:', error);
+    console.error('❌ Email Error:', error);
     res.status(500).json({ message: 'Failed to send email' });
   }
 });
