@@ -250,6 +250,15 @@ a {
   /* Removed the slidein animation because it was stretching the logo */
 }
 
+.logo-container-still {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 40px;
+  margin-bottom: 30px;
+}
+
 .logo-image {
   /* Enforce strict size limits so it doesn't blow up */
   width: 150px;
