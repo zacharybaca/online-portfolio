@@ -9,7 +9,6 @@ const Sidebar = () => {
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
 
-    // Toggle the class on the actual HTML Body element
     if (isDarkMode) {
       document.body.classList.add('light-mode');
     } else {
@@ -20,13 +19,14 @@ const Sidebar = () => {
   return (
     <div id="my-info" className="sidebar">
       <div className="sidebar-info-box">
-        {/* LOGOS */}
+        {/* --- FIXED LOGO SECTION --- */}
         <div className="logo-container">
-          <img src="/images/logo-icon.png" alt="ZB Logo" className="logo-image" />
-          <img src="/images/logo-text.png" alt="Stack by Zach" className="logo-text" />
+          {/* Use the SINGLE original file. The CSS will handle the transparency. */}
+          <img src="/images/logo.png" alt="Stack by Zach" className="logo-image" />
         </div>
+        {/* -------------------------- */}
 
-        {/* 3. NEW TOGGLE BUTTON */}
+        {/* Theme Toggle Button */}
         <button
           onClick={toggleTheme}
           className="theme-toggle-btn"
@@ -65,10 +65,7 @@ const Sidebar = () => {
               marginTop: '15px',
               height: 'auto',
               width: 'auto',
-
-              /* FIX: Change "#fff" to your theme variable */
               color: 'var(--text-primary)',
-
               textDecoration: 'underline',
               cursor: 'pointer',
             }}
