@@ -247,29 +247,40 @@ a {
   gap: 15px;
   margin-top: 40px;
   margin-bottom: 30px;
-  animation-duration: 3s;
-  animation-name: slidein;
+  /* Removed the slidein animation because it was stretching the logo */
 }
 
 .logo-image {
-  width: 180px;
+  /* Enforce strict size limits so it doesn't blow up */
+  width: 150px;
+  max-width: 100%;
   height: auto;
   object-fit: contain;
 
-  /* Remove old card styling */
+  /* Remove borders */
   border: none;
   box-shadow: none;
   border-radius: 0;
 
-  /* DARK MODE (Default): Turns Yellow -> Black -> Invisible, and Text -> White */
-  filter: grayscale(100%) contrast(500%) invert(100%);
+  /* DARK MODE (Default): */
+  /* 1. Grayscale: Turns Yellow to Grey */
+  /* 2. Contrast: Pushes Grey to White, keeps Black Black */
+  /* 3. Invert: Turns White BG to Black, Black Text to White */
+  filter: grayscale(100%) contrast(200%) invert(100%);
+
+  /* 4. Screen: Makes the Black BG transparent */
   mix-blend-mode: screen;
 }
 
 /* Light Mode Logo Override */
 body.light-mode .logo-image {
-  /* LIGHT MODE: Turns Yellow -> White -> Invisible, and Text -> Black */
-  filter: grayscale(100%) contrast(500%);
+  /* LIGHT MODE: */
+  /* 1. Grayscale: Yellow -> Grey */
+  /* 2. Contrast: Grey -> White */
+  /* 3. No Invert: Text stays Black */
+  filter: grayscale(100%) contrast(200%);
+
+  /* 4. Multiply: Makes the White BG transparent */
   mix-blend-mode: multiply;
 }
 /* ------------------------------------------------ */
