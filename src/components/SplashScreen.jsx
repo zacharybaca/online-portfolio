@@ -23,11 +23,12 @@ const SplashScreen = ({ onComplete }) => {
   return (
     <div className={`splash-screen ${fade ? 'fade-out' : ''}`}>
       <div className="splash-content">
-        {/* You can replace this text with your <img> logo if you prefer */}
+        <div className="logo-container-still">
+          <img src="/images/logo.png" alt="Stack by Zach" className="logo-image" />
+        </div>
         <h1 className="splash-title">Zachary Baca</h1>
         <p className="splash-subtitle">Software Engineer</p>
 
-        {/* Optional Loading Bar */}
         <div className="loading-bar">
           <div className="loading-progress"></div>
         </div>
