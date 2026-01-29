@@ -10,6 +10,7 @@ import multer from 'multer'; // Handles file uploads
 import fs from 'fs'; // Handles file system (creating folders)
 import path from 'path'; // Handles file paths
 import { fileURLToPath } from 'url';
+import nodemailer from 'nodemailer'; // Email sender
 
 // FIX: Recreate __dirname for ES Modules (it doesn't exist by default)
 const __filename = fileURLToPath(import.meta.url);
@@ -52,7 +53,7 @@ const storage = multer.diskStorage({
   },
 });
 
-// CHANGED: Using .any() is safer to prevent "Unexpected field" errors
+// Using .any() is safer to prevent "Unexpected field" errors
 const upload = multer({ storage: storage });
 // ----------------------------------------------
 
@@ -99,7 +100,6 @@ app.get('/api/projects', async (req, res) => {
 });
 
 // POST: Add a new project (Handles Text + Files)
-// CHANGED: Uses upload.any() to prevent crashes on file limits
 app.post('/api/projects', upload.any(), async (req, res) => {
   // Security Check
   if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
@@ -110,7 +110,6 @@ app.post('/api/projects', upload.any(), async (req, res) => {
     const { title, description, tags, repoLink, demoLink, status } = req.body;
 
     // Convert uploaded file objects into URL strings for the DB
-    // req.files will exist thanks to upload.any()
     const imageUrls = (req.files || []).map((file) => {
       const folderName = sanitizeName(title || 'untitled-project');
       return `/images/projects/${folderName}/${file.filename}`;
@@ -134,7 +133,6 @@ app.post('/api/projects', upload.any(), async (req, res) => {
 });
 
 // PUT: Update an existing project
-// CHANGED: Uses upload.any() to prevent crashes on file limits
 app.put('/api/projects/:id', upload.any(), async (req, res) => {
   // 1. Security Check
   if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
@@ -165,7 +163,7 @@ app.put('/api/projects/:id', upload.any(), async (req, res) => {
         return `/images/projects/${folderName}/${file.filename}`;
       });
 
-      // --- CRASH FIX: Ensure array exists before pushing ---
+      // Ensure array exists before pushing
       if (!Array.isArray(project.imageUrls)) {
         project.imageUrls = [];
       }
@@ -178,6 +176,49 @@ app.put('/api/projects/:id', upload.any(), async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
+  }
+});
+
+// POST: Handle Contact Form
+app.post('/api/contact', async (req, res) => {
+  const { name, email, message } = req.body;
+
+  // 1. Setup the Transporter (Microsoft/Outlook Config)
+  const transporter = nodemailer.createTransport({
+    host: 'smtp-mail.outlook.com', // The server for MSN/Hotmail/Outlook
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+    tls: {
+      ciphers: 'SSLv3',
+    },
+  });
+
+  // 2. Configure the Email Options
+  const mailOptions = {
+    from: process.env.EMAIL_USER, // Sender address (MSN)
+    to: process.env.EMAIL_TO, // Receiver address (Proton Mail)
+    replyTo: email, // Reply to the user who filled out the form
+    subject: `Portfolio Message from ${name}`,
+    text: `
+      Name: ${name}
+      Email: ${email}
+
+      Message:
+      ${message}
+    `,
+  };
+
+  // 3. Send the Email
+  try {
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: 'Email sent successfully!' });
+  } catch (error) {
+    console.error('Email Error:', error);
+    res.status(500).json({ message: 'Failed to send email' });
   }
 });
 

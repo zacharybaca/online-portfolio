@@ -1,12 +1,16 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import emailjs from '@emailjs/browser';
 
 const About = () => {
-  const form = useRef();
-  const [status, setStatus] = useState(''); // To show success/error messages
+  const [status, setStatus] = useState('');
 
-  // REORDERED: MERN/Modern stack first, Legacy/Mainframe second.
+  // State to hold form data
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: '',
+  });
+
   const skills = [
     'JavaScript (ES6+)',
     'ReactJS',
@@ -23,35 +27,45 @@ const About = () => {
     'Typescript',
     'Accessibility',
     'VS Code',
-    'DB2', // Legacy skills moved to the end
+    'DB2',
     'COBOL',
     'VSAM',
     'zOS',
     'Bootstrap',
-    'EmailJS',
+    'Nodemailer', // Updated from EmailJS
   ];
 
-  const sendEmail = (e) => {
+  // Handle input changes
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Submit form to your Backend API
+  const sendEmail = async (e) => {
     e.preventDefault();
     setStatus('Sending...');
 
-    // REPLACE 'YOUR_PUBLIC_KEY' WITH YOUR ACTUAL KEY FROM EMAILJS DASHBOARD
-    emailjs
-      .sendForm(
-        'service_9kukvd9', // Your Service ID from app.js
-        'template_epflkrw', // Your Template ID from app.js
-        form.current,
-        { publicKey: 'YOUR_PUBLIC_KEY' }
-      )
-      .then(
-        () => {
-          setStatus('Email Successfully Sent!');
-          e.target.reset(); // Clear the form
+    const apiUrl = import.meta.env.VITE_API_URL;
+
+    try {
+      const res = await fetch(`${apiUrl}/api/contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        (error) => {
-          setStatus(`Failed to send: ${error.text}`);
-        }
-      );
+        body: JSON.stringify(formData),
+      });
+
+      if (res.ok) {
+        setStatus('Email Successfully Sent!');
+        setFormData({ name: '', email: '', message: '' }); // Clear form
+      } else {
+        setStatus('Failed to send message. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setStatus('Failed to send message. Server error.');
+    }
   };
 
   return (
@@ -70,7 +84,7 @@ const About = () => {
 
             <div className="about-bio">
               <h2 id="about-heading">About Me</h2>
-              {/* UPDATED BIO SECTION START */}
+
               <p>
                 Hello! I'm Zach. I am a <strong>Software Engineer</strong> based in La Porte, IN,
                 specializing in the <strong>MERN stack</strong> (MongoDB, Express, React, Node.js).
@@ -90,19 +104,39 @@ const About = () => {
                 When I'm not coding, I enjoy spending time with my family—my mom Robyn, my brother
                 Carlos, and my boyfriend Ellis.
               </p>
-              {/* UPDATED BIO SECTION END */}
 
               <div className="form">
-                {/* We attach the ref={form} and onSubmit={sendEmail} here */}
-                <form ref={form} id="contactForm" onSubmit={sendEmail}>
+                <form id="contactForm" onSubmit={sendEmail}>
                   <label htmlFor="name">Enter Your Name:</label>
-                  <input id="name" type="text" name="name" required />
+                  <input
+                    id="name"
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                  />
 
                   <label htmlFor="email">Enter Your Email:</label>
-                  <input id="email" type="email" name="email" required />
+                  <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
 
                   <label htmlFor="message">Enter A Message:</label>
-                  <textarea id="message" name="message" cols="30" rows="5" required></textarea>
+                  <textarea
+                    id="message"
+                    name="message"
+                    cols="30"
+                    rows="5"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                  ></textarea>
 
                   <button type="submit">Submit</button>
 
