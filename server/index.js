@@ -181,20 +181,23 @@ app.put('/api/projects/:id', upload.any(), async (req, res) => {
 
 // POST: Handle Contact Form
 app.post('/api/contact', async (req, res) => {
+  console.log('--- Contact Form Request Received ---');
+
+  // 1. Debugging: Check if variables are loaded (Don't share this log publicly!)
+  console.log('User:', process.env.EMAIL_USER);
+  console.log('To:', process.env.EMAIL_TO);
+  // Do NOT log the password!
   const { name, email, message } = req.body;
 
-  // 1. Setup the Transporter (Microsoft/Outlook Config)
   const transporter = nodemailer.createTransport({
-    host: 'smtp-mail.outlook.com', // The server for MSN/Hotmail/Outlook
+    host: 'smtp.office365.com',
     port: 587,
-    secure: false, // true for 465, false for other ports
+    secure: false, // keep false (uses STARTTLS)
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
-    tls: {
-      ciphers: 'SSLv3',
-    },
+    // REMOVED the 'tls' block so it defaults to modern security
   });
 
   // 2. Configure the Email Options
