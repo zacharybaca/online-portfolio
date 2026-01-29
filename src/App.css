@@ -47,17 +47,23 @@ body.light-mode {
 /* --- FONTS --- */
 @font-face {
   font-family: 'Stylish';
-  src: local('BigelowRules'), url('/fonts/BigelowRules.ttf') format('truetype');
+  src:
+    local('BigelowRules'),
+    url('/fonts/BigelowRules.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Normal';
-  src: local('BilboSwashCaps'), url('/fonts/BilboSwashCaps.ttf') format('truetype');
+  src:
+    local('BilboSwashCaps'),
+    url('/fonts/BilboSwashCaps.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Modern';
-  src: local('Audiowide-Regular'), url('/fonts/Audiowide-Regular.ttf') format('truetype');
+  src:
+    local('Audiowide-Regular'),
+    url('/fonts/Audiowide-Regular.ttf') format('truetype');
 }
 
 /* --- GLOBAL STYLES --- */
@@ -90,9 +96,7 @@ body {
   --bg-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');
 
   /* The Layer Stack: Dark Gradient on top of Image */
-  background-image:
-    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)),
-    var(--bg-image);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), var(--bg-image);
 
   /* Lock the image in place */
   background-size: cover;
@@ -101,14 +105,21 @@ body {
   background-repeat: no-repeat;
 
   transform: translateX(0px);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 article {
   background: transparent;
 }
 
-h1, h2, h3, h4, h5, p {
+h1,
+h2,
+h3,
+h4,
+h5,
+p {
   font-family: 'Modern', 'Merriweather', serif;
 }
 
@@ -164,7 +175,8 @@ a {
   border-bottom: 1px solid var(--border-color);
 }
 
-.box h1, .box h6 {
+.box h1,
+.box h6 {
   margin: 0 auto 8px;
 }
 
@@ -175,8 +187,8 @@ a {
 /* --- FIXED IMAGE SIZING --- */
 .cell img {
   width: 100%;
-  height: 200px;       /* Forces all thumbnails to be the same height */
-  object-fit: cover;   /* Ensures the image fills the box without distortion */
+  height: 200px; /* Forces all thumbnails to be the same height */
+  object-fit: cover; /* Ensures the image fills the box without distortion */
   min-width: 100px;
   border: 4px solid var(--border-color);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
@@ -421,7 +433,9 @@ nav a span {
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings: 'MORF' 15, 'SHLN' 50;
+  font-variation-settings:
+    'MORF' 15,
+    'SHLN' 50;
   color: var(--text-primary);
 }
 
@@ -582,7 +596,9 @@ nav a span {
   justify-content: center;
   align-items: center;
   z-index: 9999; /* Sit on top of everything */
-  transition: opacity 0.5s ease-out, visibility 0.5s;
+  transition:
+    opacity 0.5s ease-out,
+    visibility 0.5s;
 }
 
 .splash-screen.fade-out {
@@ -628,20 +644,29 @@ nav a span {
 }
 
 @keyframes popIn {
-  0% { transform: scale(0.8); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes loadProgress {
-  0% { width: 0%; }
-  100% { width: 100%; }
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
 }
 
 /* --- HIDE THEME SELECTOR IN LIGHT MODE --- */
 body.light-mode .theme-selector {
   display: none !important;
 }
-
 
 /* --- MEDIA QUERIES --- */
 /* Tablet */
