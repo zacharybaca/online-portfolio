@@ -20,16 +20,16 @@
 
 /* Light Mode Overrides */
 body.light-mode {
-  /* 1. Reset the variable so it is empty in light mode */
+  /* 1. CRITICAL: Force the background variable to be empty */
   --bg-image: none !important;
 
-  /* 2. Force the background to be the light gray color */
+  /* 2. CRITICAL: Force the background to be the light color */
   background-color: #f4f4f4 !important;
 
-  /* 3. Explicitly remove the image layer */
+  /* 3. CRITICAL: Force the image layer to be removed */
   background-image: none !important;
 
-  /* 4. Reset standard variables */
+  /* Standard Light Variables */
   --bg-primary: #f4f4f4;
   --bg-secondary: #ffffff;
   --text-primary: #1a1a1a;
@@ -38,6 +38,8 @@ body.light-mode {
   --border-color: #ccc;
   --accent-color: #e0e0e0;
   --nav-link: #555;
+
+  /* Logo Logic: Invert OFF for Light Mode */
   --logo-filter: invert(0);
   --logo-blend: normal;
 }
@@ -45,23 +47,17 @@ body.light-mode {
 /* --- FONTS --- */
 @font-face {
   font-family: 'Stylish';
-  src:
-    local('BigelowRules'),
-    url('/fonts/BigelowRules.ttf') format('truetype');
+  src: local('BigelowRules'), url('/fonts/BigelowRules.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Normal';
-  src:
-    local('BilboSwashCaps'),
-    url('/fonts/BilboSwashCaps.ttf') format('truetype');
+  src: local('BilboSwashCaps'), url('/fonts/BilboSwashCaps.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Modern';
-  src:
-    local('Audiowide-Regular'),
-    url('/fonts/Audiowide-Regular.ttf') format('truetype');
+  src: local('Audiowide-Regular'), url('/fonts/Audiowide-Regular.ttf') format('truetype');
 }
 
 /* --- GLOBAL STYLES --- */
@@ -83,9 +79,11 @@ body {
   font-family: 'Modern', 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;
   font-weight: normal;
   line-height: 1.5;
+
+  /* 1. TEXT COLOR */
   color: var(--text-primary);
 
-  /* --- BACKGROUND SETUP --- */
+  /* --- BACKGROUND SETUP (Dark Mode Default) --- */
   background-color: #000; /* Fallback color */
 
   /* The Default Image (overridden by JS variable) */
@@ -102,6 +100,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
 
+  transform: translateX(0px);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -109,26 +108,19 @@ article {
   background: transparent;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-p {
+h1, h2, h3, h4, h5, p {
   font-family: 'Modern', 'Merriweather', serif;
 }
 
 h5 {
   font-family: 'Modern', 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   letter-spacing: 2.5px;
-  -webkit-text-transform: uppercase;
   text-transform: uppercase;
   color: var(--text-primary);
 }
 
 h6 {
   letter-spacing: 2.5px;
-  -webkit-text-transform: uppercase;
   text-transform: uppercase;
   font-weight: 600;
   color: var(--text-primary);
@@ -160,7 +152,6 @@ a {
 /* --- GRID LAYOUT --- */
 .grid {
   display: grid;
-  /* auto-fill keeps columns consistent size even if there's only 1 item */
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   grid-gap: 30px;
 }
@@ -173,13 +164,49 @@ a {
   border-bottom: 1px solid var(--border-color);
 }
 
-.box h1,
-.box h6 {
+.box h1, .box h6 {
   margin: 0 auto 8px;
 }
 
 .box li {
   font-size: 13px;
+}
+
+/* --- FIXED IMAGE SIZING --- */
+.cell img {
+  width: 100%;
+  height: 200px;       /* Forces all thumbnails to be the same height */
+  object-fit: cover;   /* Ensures the image fills the box without distortion */
+  min-width: 100px;
+  border: 4px solid var(--border-color);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+  display: block;
+}
+
+/* --- TAGS & BADGES --- */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.badge {
+  background-color: var(--border-color);
+  color: var(--text-primary);
+  font-family: 'Lato', sans-serif;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.badge:hover {
+  background-color: var(--nav-link);
+  color: #fff;
 }
 
 /* --- SIDEBAR --- */
@@ -212,7 +239,7 @@ a {
   border: 4px solid var(--border-color);
 }
 
-/* --- LOGO SECTION (LARGE) --- */
+/* --- UPDATED LOGO SECTION (Magic Transparency Hack) --- */
 .logo-container {
   display: flex;
   align-items: center;
@@ -225,24 +252,27 @@ a {
 }
 
 .logo-image {
-  width: 140px;
-  height: 140px;
-  object-fit: cover;
-  border-radius: 20px;
-  border: 4px solid #ffffff33;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+  width: 180px;
+  height: auto;
+  object-fit: contain;
+
+  /* Remove old card styling */
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+
+  /* DARK MODE (Default): Turns Yellow -> Black -> Invisible, and Text -> White */
+  filter: grayscale(100%) contrast(500%) invert(100%);
+  mix-blend-mode: screen;
 }
 
-.logo-text {
-  height: 100px;
-  width: auto;
-  border-radius: 8px;
-  display: block;
-
-  /* Dynamic Filter for Dark/Light Mode */
-  filter: var(--logo-filter);
-  mix-blend-mode: var(--logo-blend);
+/* Light Mode Logo Override */
+body.light-mode .logo-image {
+  /* LIGHT MODE: Turns Yellow -> White -> Invisible, and Text -> Black */
+  filter: grayscale(100%) contrast(500%);
+  mix-blend-mode: multiply;
 }
+/* ------------------------------------------------ */
 
 /* --- TOGGLE BUTTON --- */
 .theme-toggle-btn {
@@ -260,12 +290,12 @@ a {
   letter-spacing: 1px;
 }
 
-/* --- QR CODE (FIXED SIZE) --- */
+/* --- QR CODE --- */
 .qr-image {
   display: block;
-  width: 150px; /* Fixed to manageable size */
+  width: 150px;
   height: 150px;
-  margin: 20px auto 0; /* Centered with top spacing */
+  margin: 20px auto 0;
   border: 4px solid var(--border-color);
   border-radius: 10px;
 }
@@ -371,9 +401,7 @@ nav a span {
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings:
-    'MORF' 15,
-    'SHLN' 50;
+  font-variation-settings: 'MORF' 15, 'SHLN' 50;
   color: var(--text-primary);
 }
 
@@ -404,46 +432,6 @@ nav a span {
   width: 100%;
 }
 
-/* --- FIXED IMAGE SIZING --- */
-.cell img {
-  width: 100%;
-  height: 200px;       /* Forces all thumbnails to be the same height */
-  object-fit: cover;   /* Ensures the image fills the box without distortion */
-  min-width: 100px;
-  border: 4px solid var(--border-color);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
-  display: block;      /* Removes tiny gap at bottom of images */
-}
-
-/* --- TAGS & BADGES --- */
-.tags {
-  display: flex;
-  flex-wrap: wrap;       /* Allows tags to wrap to next line if needed */
-  gap: 8px;              /* consistent spacing between tags */
-  margin-top: 12px;
-}
-
-.badge {
-  background-color: var(--border-color); /* Matches your theme */
-  color: var(--text-primary);
-  font-family: 'Lato', sans-serif;
-  font-size: 0.7rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 5px 10px;
-  border-radius: 4px;    /* Rounded corners */
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Optional: Slight hover effect for tags */
-.badge:hover {
-  background-color: var(--nav-link);
-  color: #fff;
-}
-/* --------------------- */
-
-
 /* --- ABOUT & PROJECT PAGES --- */
 .about-intro-box p,
 .project-info-box p {
@@ -470,12 +458,12 @@ nav a span {
 .btn-link {
   display: block;
   text-align: center;
-  color: #fff; /* Always white text for buttons */
+  color: #fff;
   width: 100%;
   max-width: 255px;
   margin: auto 0 5px 0;
   padding: 0.85em 1em;
-  background-color: #333; /* Always dark button background */
+  background-color: #333;
   border: 1px solid transparent;
 }
 
@@ -485,7 +473,6 @@ nav a span {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* Dark semi-transparent background */
   background: rgba(125, 125, 125, 0.1);
   padding: 2rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -563,6 +550,79 @@ nav a span {
   animation-name: slidein;
 }
 
+/* --- SPLASH SCREEN --- */
+.splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000; /* Always dark for maximum contrast */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Sit on top of everything */
+  transition: opacity 0.5s ease-out, visibility 0.5s;
+}
+
+.splash-screen.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.splash-content {
+  text-align: center;
+  animation: popIn 1s ease forwards;
+}
+
+.splash-title {
+  font-family: 'Honk', system-ui;
+  font-size: 4rem;
+  margin: 0;
+  color: #fff;
+}
+
+.splash-subtitle {
+  color: #888;
+  font-family: 'Lato', sans-serif;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+/* Loading Bar Animation */
+.loading-bar {
+  width: 200px;
+  height: 4px;
+  background: #333;
+  margin: 20px auto 0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.loading-progress {
+  width: 0%;
+  height: 100%;
+  background: #fff;
+  animation: loadProgress 2s ease-in-out forwards;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes loadProgress {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+/* --- HIDE THEME SELECTOR IN LIGHT MODE --- */
+body.light-mode .theme-selector {
+  display: none !important;
+}
+
+
 /* --- MEDIA QUERIES --- */
 /* Tablet */
 @media screen and (min-width: 768px) {
@@ -597,7 +657,6 @@ nav a span {
   }
 
   .grid {
-    /* auto-fill keeps single items sized correctly */
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
 }
@@ -630,78 +689,4 @@ nav a span {
     font-size: 13px;
     outline: none;
   }
-}
-
-/* --- HIDE THEME SELECTOR IN LIGHT MODE --- */
-body.light-mode .theme-selector {
-  display: none !important;
-}
-
-/* --- SPLASH SCREEN --- */
-.splash-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: #000; /* Always dark for maximum contrast */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999; /* Sit on top of everything */
-  transition: opacity 0.5s ease-out, visibility 0.5s;
-}
-
-/* The Fade Out Effect */
-.splash-screen.fade-out {
-  opacity: 0;
-  visibility: hidden;
-}
-
-.splash-content {
-  text-align: center;
-  animation: popIn 1s ease forwards;
-}
-
-.splash-title {
-  font-family: 'Honk', system-ui; /* Using your fun font */
-  font-size: 4rem;
-  margin: 0;
-  color: #fff;
-}
-
-.splash-subtitle {
-  color: #888;
-  font-family: 'Lato', sans-serif;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-top: 10px;
-}
-
-/* Loading Bar Animation */
-.loading-bar {
-  width: 200px;
-  height: 4px;
-  background: #333;
-  margin: 20px auto 0;
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.loading-progress {
-  width: 0%;
-  height: 100%;
-  background: #fff;
-  animation: loadProgress 2s ease-in-out forwards;
-}
-
-/* Animations */
-@keyframes popIn {
-  0% { transform: scale(0.8); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-@keyframes loadProgress {
-  0% { width: 0%; }
-  100% { width: 100%; }
 }
