@@ -20,16 +20,24 @@
 
 /* Light Mode Overrides */
 body.light-mode {
-  --bg-primary: #f4f4f4; /* Light Gray Background */
-  --bg-secondary: #ffffff; /* White Cards */
-  --text-primary: #1a1a1a; /* Nearly Black Text */
-  --text-secondary: #4a4a4a; /* Dark Gray Text */
-  --text-muted: #666;
-  --border-color: #ccc; /* Lighter Borders */
-  --accent-color: #e0e0e0; /* Light Gray Buttons */
-  --nav-link: #555;
+  /* 1. Reset the variable so it is empty in light mode */
+  --bg-image: none !important;
 
-  /* Logo Logic: Invert OFF for Light Mode (keeps original black text) */
+  /* 2. Force the background to be the light gray color */
+  background-color: #f4f4f4 !important;
+
+  /* 3. Explicitly remove the image layer */
+  background-image: none !important;
+
+  /* 4. Reset standard variables */
+  --bg-primary: #f4f4f4;
+  --bg-secondary: #ffffff;
+  --text-primary: #1a1a1a;
+  --text-secondary: #4a4a4a;
+  --text-muted: #666;
+  --border-color: #ccc;
+  --accent-color: #e0e0e0;
+  --nav-link: #555;
   --logo-filter: invert(0);
   --logo-blend: normal;
 }
@@ -75,15 +83,26 @@ body {
   font-family: 'Modern', 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;
   font-weight: normal;
   line-height: 1.5;
-
-  /* USE VARIABLES FOR THEME */
   color: var(--text-primary);
-  background: var(--bg-primary);
 
-  transform: translateX(0px);
-  transition:
-    background 0.3s ease,
-    color 0.3s ease;
+  /* --- BACKGROUND SETUP --- */
+  background-color: #000; /* Fallback color */
+
+  /* The Default Image (overridden by JS variable) */
+  --bg-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');
+
+  /* The Layer Stack: Dark Gradient on top of Image */
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)),
+    var(--bg-image);
+
+  /* Lock the image in place */
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 article {
@@ -138,14 +157,13 @@ a {
   justify-content: space-between;
 }
 
-/* --- GRID LAYOUT FIX --- */
+/* --- GRID LAYOUT --- */
 .grid {
   display: grid;
-  /* CHANGED: auto-fill keeps columns consistent size even if there's only 1 item */
+  /* auto-fill keeps columns consistent size even if there's only 1 item */
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   grid-gap: 30px;
 }
-/* ----------------------- */
 
 .box {
   width: 100%;
@@ -386,12 +404,45 @@ nav a span {
   width: 100%;
 }
 
+/* --- FIXED IMAGE SIZING --- */
 .cell img {
   width: 100%;
+  height: 200px;       /* Forces all thumbnails to be the same height */
+  object-fit: cover;   /* Ensures the image fills the box without distortion */
   min-width: 100px;
   border: 4px solid var(--border-color);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+  display: block;      /* Removes tiny gap at bottom of images */
 }
+
+/* --- TAGS & BADGES --- */
+.tags {
+  display: flex;
+  flex-wrap: wrap;       /* Allows tags to wrap to next line if needed */
+  gap: 8px;              /* consistent spacing between tags */
+  margin-top: 12px;
+}
+
+.badge {
+  background-color: var(--border-color); /* Matches your theme */
+  color: var(--text-primary);
+  font-family: 'Lato', sans-serif;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 5px 10px;
+  border-radius: 4px;    /* Rounded corners */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Optional: Slight hover effect for tags */
+.badge:hover {
+  background-color: var(--nav-link);
+  color: #fff;
+}
+/* --------------------- */
+
 
 /* --- ABOUT & PROJECT PAGES --- */
 .about-intro-box p,
@@ -546,7 +597,7 @@ nav a span {
   }
 
   .grid {
-    /* CHANGED: auto-fill keeps single items sized correctly */
+    /* auto-fill keeps single items sized correctly */
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
 }
@@ -579,4 +630,78 @@ nav a span {
     font-size: 13px;
     outline: none;
   }
+}
+
+/* --- HIDE THEME SELECTOR IN LIGHT MODE --- */
+body.light-mode .theme-selector {
+  display: none !important;
+}
+
+/* --- SPLASH SCREEN --- */
+.splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000; /* Always dark for maximum contrast */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Sit on top of everything */
+  transition: opacity 0.5s ease-out, visibility 0.5s;
+}
+
+/* The Fade Out Effect */
+.splash-screen.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.splash-content {
+  text-align: center;
+  animation: popIn 1s ease forwards;
+}
+
+.splash-title {
+  font-family: 'Honk', system-ui; /* Using your fun font */
+  font-size: 4rem;
+  margin: 0;
+  color: #fff;
+}
+
+.splash-subtitle {
+  color: #888;
+  font-family: 'Lato', sans-serif;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+/* Loading Bar Animation */
+.loading-bar {
+  width: 200px;
+  height: 4px;
+  background: #333;
+  margin: 20px auto 0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.loading-progress {
+  width: 0%;
+  height: 100%;
+  background: #fff;
+  animation: loadProgress 2s ease-in-out forwards;
+}
+
+/* Animations */
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes loadProgress {
+  0% { width: 0%; }
+  100% { width: 100%; }
 }
