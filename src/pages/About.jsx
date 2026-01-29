@@ -1,79 +1,49 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import emailjs from '@emailjs/browser';
 
 const About = () => {
+  const form = useRef();
   const [status, setStatus] = useState('');
 
-  // State to hold form data
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: '',
-  });
-
   const skills = [
-    'JavaScript (ES6+)',
-    'ReactJS',
-    'Node.js',
-    'Express',
-    'MongoDB',
-    'HTML5 & CSS3',
-    'Git & GitHub',
-    'Python',
-    'Django',
-    'Fetch API & Axios',
-    'React Router',
-    'React Context API',
-    'Typescript',
-    'Accessibility',
-    'VS Code',
-    'DB2',
-    'COBOL',
-    'VSAM',
-    'zOS',
-    'Bootstrap',
-    'Nodemailer', // Updated from EmailJS
+    'JavaScript (ES6+)', 'ReactJS', 'Node.js', 'Express', 'MongoDB',
+    'HTML5 & CSS3', 'Git & GitHub', 'Python', 'Django',
+    'Fetch API & Axios', 'React Router', 'React Context API',
+    'Typescript', 'Accessibility', 'VS Code', 'DB2', 'COBOL',
+    'VSAM', 'zOS', 'Bootstrap', 'EmailJS'
   ];
 
-  // Handle input changes
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  // Submit form to your Backend API
-  const sendEmail = async (e) => {
+  const sendEmail = (e) => {
     e.preventDefault();
     setStatus('Sending...');
 
-    const apiUrl = import.meta.env.VITE_API_URL;
+    // --- EMAILJS CONFIGURATION ---
+    // Make sure these match your dashboard at https://dashboard.emailjs.com/
+    const SERVICE_ID = 'service_9kukvd9';  // From your earlier code
+    const TEMPLATE_ID = 'template_epflkrw'; // From your earlier code
+    const PUBLIC_KEY = 'hrwzRdjpbVP720IcV';   // ⚠️ REPLACE THIS with your actual Public Key
 
-    try {
-      const res = await fetch(`${apiUrl}/api/contact`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+    emailjs
+      .sendForm(SERVICE_ID, TEMPLATE_ID, form.current, {
+        publicKey: PUBLIC_KEY,
+      })
+      .then(
+        () => {
+          setStatus('Email Successfully Sent!');
+          e.target.reset();
         },
-        body: JSON.stringify(formData),
-      });
-
-      if (res.ok) {
-        setStatus('Email Successfully Sent!');
-        setFormData({ name: '', email: '', message: '' }); // Clear form
-      } else {
-        setStatus('Failed to send message. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      setStatus('Failed to send message. Server error.');
-    }
+        (error) => {
+          console.error('EmailJS Error:', error);
+          setStatus(`Failed to send: ${error.text}`);
+        }
+      );
   };
 
   return (
     <>
       <nav className="nav">
-        <Link to="/">
-          <span>&larr;</span> Back
-        </Link>
+        <Link to="/"><span>&larr;</span> Back</Link>
       </nav>
 
       <article className="portfolio-about">
@@ -84,20 +54,18 @@ const About = () => {
 
             <div className="about-bio">
               <h2 id="about-heading">About Me</h2>
-
               <p>
                 Hello! I'm Zach. I am a <strong>Software Engineer</strong> based in La Porte, IN,
-                specializing in the <strong>MERN stack</strong> (MongoDB, Express, React, Node.js).
+                specializing in the <strong>MERN stack</strong>.
               </p>
               <p>
                 My journey in tech is unique. While I currently work in Customer Service & Billing
-                at <strong>Surf Internet</strong>, my professional foundation is deeply rooted in
-                engineering. This experience has given me a dual perspective: I possess the
-                technical fluency to build scalable applications and the communication skills to
-                deeply understand the users who rely on them.
+                at <strong>Surf Internet</strong>, my professional foundation is rooted in
+                engineering. I possess the technical fluency to build scalable applications and
+                the communication skills to understand the users who rely on them.
               </p>
               <p>
-                I am now actively seeking to return to a full-time engineering role where I can
+                I am actively seeking to return to a full-time engineering role where I can
                 apply my expertise in JavaScript and my passion for clean, testable code.
               </p>
               <p>
@@ -106,41 +74,19 @@ const About = () => {
               </p>
 
               <div className="form">
-                <form id="contactForm" onSubmit={sendEmail}>
+                {/* Ref attached here so EmailJS can read the inputs */}
+                <form ref={form} id="contactForm" onSubmit={sendEmail}>
                   <label htmlFor="name">Enter Your Name:</label>
-                  <input
-                    id="name"
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                  />
+                  <input id="name" type="text" name="name" required />
 
                   <label htmlFor="email">Enter Your Email:</label>
-                  <input
-                    id="email"
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                  />
+                  <input id="email" type="email" name="email" required />
 
                   <label htmlFor="message">Enter A Message:</label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    cols="30"
-                    rows="5"
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                  ></textarea>
+                  <textarea id="message" name="message" cols="30" rows="5" required></textarea>
 
                   <button type="submit">Submit</button>
 
-                  {/* Status Message */}
                   {status && <p style={{ marginTop: '10px', fontWeight: 'bold' }}>{status}</p>}
                 </form>
               </div>
@@ -154,40 +100,15 @@ const About = () => {
                 <li key={index}>{skill}</li>
               ))}
             </ul>
-
-            {/* Resume Link */}
-            <a
-              className="btn-link"
-              href="/documents/software-engineer-resume.pdf"
-              download="software-engineer-resume.pdf"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Download Resume
-            </a>
-            <a
-              className="btn-link"
-              href="https://www.linkedin.com/in/zacharyjordanbaca/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              LinkedIn
-            </a>
-            <a
-              className="btn-link"
-              href="https://github.com/zacharybaca"
-              target="_blank"
-              rel="noreferrer"
-            >
-              GitHub
-            </a>
+            {/* Links Section */}
+            <a className="btn-link" href="/documents/software-engineer-resume.pdf" download target="_blank" rel="noreferrer">Download Resume</a>
+            <a className="btn-link" href="https://www.linkedin.com/in/zacharyjordanbaca/" target="_blank" rel="noreferrer">LinkedIn</a>
+            <a className="btn-link" href="https://github.com/zacharybaca" target="_blank" rel="noreferrer">GitHub</a>
           </div>
         </div>
 
         <nav className="nav">
-          <Link to="/">
-            <span>&larr;</span> Back
-          </Link>
+          <Link to="/"><span>&larr;</span> Back</Link>
         </nav>
       </article>
     </>
