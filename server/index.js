@@ -190,14 +190,18 @@ app.post('/api/contact', async (req, res) => {
   const { name, email, message } = req.body;
 
   const transporter = nodemailer.createTransport({
-    host: 'smtp.office365.com',
+    host: 'smtp.mail.me.com',
     port: 587,
-    secure: false, // keep false (uses STARTTLS)
+    secure: false, // false uses STARTTLS, which is what iCloud expects on port 587
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
-    // REMOVED the 'tls' block so it defaults to modern security
+    tls: {
+      // This is sometimes needed for iCloud to prevent handshake errors
+      ciphers: 'SSLv3',
+      rejectUnauthorized: false,
+    },
   });
 
   // 2. Configure the Email Options
