@@ -50,7 +50,7 @@ const About = () => {
         <div className="inner-wrapper flex-row-wrap two-col">
           <div className="about-intro-box box">
             <h1 id="about-heading">Zachary Baca</h1>
-            <p id="title-heading">Software Engineer & Web Developer</p>
+            <p id="title-heading">Software Engineer & Fullstack Web Developer</p>
 
             <div className="about-bio">
               <h2 id="about-heading">About Me</h2>
@@ -69,8 +69,7 @@ const About = () => {
                 apply my expertise in JavaScript and my passion for clean, testable code.
               </p>
               <p>
-                When I'm not coding, I enjoy spending time with my family—my mom Robyn, my brother
-                Carlos, and my boyfriend Ellis.
+                When I'm not coding, I enjoy spending time with my family, and spending time in nature whenever I can.
               </p>
 
               <div className="form">
