@@ -18,9 +18,11 @@ const Admin = () => {
   // State for the list of existing projects
   const [projects, setProjects] = useState([]);
 
-  // --- FIX 1: Define the fetch function INSIDE useEffect ---
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const fetchProjects = async () => {
+      setIsLoading(true); // Start the "50s" timer (visually)
       try {
         const apiUrl = import.meta.env.VITE_API_URL;
         const res = await fetch(`${apiUrl}/api/projects`);
@@ -28,11 +30,14 @@ const Admin = () => {
         setProjects(data);
       } catch (error) {
         console.error('Error fetching projects:', error);
+      } finally {
+        // This runs AFTER the server wakes up (whether it took 1s or 50s)
+        setIsLoading(false);
       }
     };
 
     fetchProjects();
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
   const handleTextChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -223,11 +228,20 @@ const Admin = () => {
         {/* RIGHT COLUMN: MANAGE PROJECTS */}
         <div className="list-section">
           <h2>Manage Projects</h2>
-          <div className="project-list">
-            {projects.length === 0 ? (
-              <p>No projects found.</p>
-            ) : (
-              projects.map((project) => (
+
+          {/* STATE 1: LOADING (Waiting for the 50s wakeup) */}
+          {isLoading ? (
+            <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+              <div className="spinner" style={{ marginBottom: '15px', fontSize: '2rem' }}>
+                ⏳
+              </div>
+              <h3>Waking up server...</h3>
+              <p>This may take up to 50 seconds on the free tier.</p>
+            </div>
+          ) : projects.length > 0 ? (
+            /* STATE 2: PROJECTS FOUND */
+            <div className="project-list">
+              {projects.map((project) => (
                 <div
                   key={project._id}
                   style={{
@@ -240,8 +254,6 @@ const Admin = () => {
                   }}
                 >
                   <h4 style={{ margin: '0 0 5px 0' }}>{project.title}</h4>
-                  <p style={{ fontSize: '0.8rem', color: '#666' }}>ID: {project._id}</p>
-
                   <div style={{ marginTop: '10px' }}>
                     <button
                       onClick={() => handleDelete(project._id)}
@@ -257,9 +269,24 @@ const Admin = () => {
                     </button>
                   </div>
                 </div>
-              ))
-            )}
-          </div>
+              ))}
+            </div>
+          ) : (
+            /* STATE 3: SERVER AWAKE, BUT NO PROJECTS (Your new message) */
+            <div
+              style={{
+                textAlign: 'center',
+                padding: '30px',
+                border: '2px dashed #ccc',
+                borderRadius: '8px',
+                color: '#888',
+              }}
+            >
+              <h3>No Projects Found</h3>
+              <p>There are currently no projects to show.</p>
+              <p style={{ fontSize: '0.8rem' }}>Use the form on the left to add your first one!</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
