@@ -77,20 +77,6 @@ const ProjectDetail = () => {
                 Live Demo
               </a>
             )}
-
-            {/* --- NEW EDIT BUTTON --- */}
-            <Link
-              to={`/edit/${project._id}`}
-              className="btn-link"
-              style={{
-                display: 'inline-block',
-                background: '#444', // Dark gray to distinguish from main buttons
-                border: '1px solid #666',
-              }}
-            >
-              ⚙️ Edit Project
-            </Link>
-            {/* ----------------------- */}
           </div>
 
           <p>{project.description}</p>
