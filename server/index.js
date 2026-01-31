@@ -178,6 +178,40 @@ app.put('/api/projects/:id', upload.any(), async (req, res) => {
   }
 });
 
+
+// DELETE: Delete a project
+app.delete('/api/projects/:id', async (req, res) => {
+  // 1. Security Check
+  if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
+    return res.status(403).json({ message: 'Unauthorized' });
+  }
+
+  try {
+    // 2. Find the project first (so we know which folder to delete)
+    const project = await Project.findById(req.params.id);
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    // 3. OPTIONAL: Delete the images folder from the server
+    // (We recreate the folder name based on the title)
+    const folderName = sanitizeName(project.title);
+    const folderPath = path.join(__dirname, '../public/images/projects', folderName);
+
+    // Check if folder exists, then delete it
+    if (fs.existsSync(folderPath)) {
+      fs.rmSync(folderPath, { recursive: true, force: true });
+    }
+
+    // 4. Delete from Database
+    await Project.findByIdAndDelete(req.params.id);
+
+    res.json({ message: 'Project deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+});
 // 6. START SERVER
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
