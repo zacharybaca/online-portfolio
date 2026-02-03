@@ -135,6 +135,126 @@ const blogSchema = new Schema(
 
 const BlogPost = model('BlogPost', blogSchema);
 
+// ==========================================
+// BLOG ROUTES
+// ==========================================
+
+// GET (Public): Fetch only PUBLISHED posts for the main blog page
+app.get('/api/blog', async (req, res) => {
+  try {
+    // Sort by 'createdAt' descending (newest first)
+    const posts = await BlogPost.find({ status: 'published' }).sort({ createdAt: -1 });
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// GET (Admin): Fetch ALL posts (Drafts + Published)
+// Access this via your Admin Dashboard
+app.get('/api/blog/all', async (req, res) => {
+  // Security Check
+  if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
+    return res.status(403).json({ message: 'Unauthorized' });
+  }
+
+  try {
+    const posts = await BlogPost.find().sort({ createdAt: -1 });
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// GET (Public): Fetch a single post by its SLUG (e.g., /blog/my-first-post)
+app.get('/api/blog/:slug', async (req, res) => {
+  try {
+    const post = await BlogPost.findOne({ slug: req.params.slug });
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    res.json(post);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// POST (Admin): Create a new Blog Post
+app.post('/api/blog', async (req, res) => {
+  if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
+    return res.status(403).json({ message: 'Unauthorized' });
+  }
+
+  try {
+    const { title, content, summary, tags, coverImage, status, customSlug } = req.body;
+
+    // Auto-generate slug from title if not provided (e.g. "My Post" -> "my-post")
+    // We reuse your existing 'sanitizeName' helper!
+    const finalSlug = customSlug || sanitizeName(title);
+
+    const newPost = new BlogPost({
+      title,
+      content,
+      summary,
+      tags: tags ? tags.split(',').map(t => t.trim()) : [], // Handle "React, JS" string
+      coverImage,
+      status: status || 'draft',
+      slug: finalSlug
+    });
+
+    await newPost.save();
+    res.json(newPost);
+  } catch (error) {
+    // Handle duplicate slug error (code 11000)
+    if (error.code === 11000) {
+      return res.status(400).json({ message: 'A post with this URL slug already exists.' });
+    }
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// PUT (Admin): Update a Blog Post
+app.put('/api/blog/:id', async (req, res) => {
+  if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
+    return res.status(403).json({ message: 'Unauthorized' });
+  }
+
+  try {
+    const { title, content, summary, tags, coverImage, status, slug } = req.body;
+    const post = await BlogPost.findById(req.params.id);
+
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+
+    // Update fields if they are sent
+    if (title) post.title = title;
+    if (content) post.content = content;
+    if (summary) post.summary = summary;
+    if (tags) post.tags = typeof tags === 'string' ? tags.split(',').map(t => t.trim()) : tags;
+    if (coverImage) post.coverImage = coverImage;
+    if (status) post.status = status;
+    if (slug) post.slug = slug;
+
+    await post.save();
+    res.json(post);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// DELETE (Admin): Delete a Blog Post
+app.delete('/api/blog/:id', async (req, res) => {
+  if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
+    return res.status(403).json({ message: 'Unauthorized' });
+  }
+
+  try {
+    await BlogPost.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Blog post deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // 5. CREATE ROUTES
 
 // GET: Fetch all projects
