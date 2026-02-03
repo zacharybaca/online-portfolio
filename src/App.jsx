@@ -13,6 +13,7 @@ import About from './pages/About';
 import ProjectDetail from './pages/ProjectDetail';
 import Admin from './pages/Admin';
 import EditProject from './pages/EditProject';
+import BlogFeed from './components/BlogFeed';
 
 function App() {
   // State to track if the splash screen is visible
@@ -31,6 +32,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
+            <Route path="/blogs" element={<BlogFeed />} />
 
             {/* Dynamic Project Route */}
             <Route path="/project/:id" element={<ProjectDetail />} />
