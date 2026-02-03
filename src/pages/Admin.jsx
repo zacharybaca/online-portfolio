@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const Admin = () => {
   const [adminKey, setAdminKey] = useState('');
 
-  // State for the Form
+  // --- PROJECT STATE ---
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -14,19 +14,26 @@ const Admin = () => {
     status: 'completed',
   });
   const [files, setFiles] = useState([]);
+
+  // --- BLOG STATE (NEW) ---
+  const [blogFormData, setBlogFormData] = useState({
+    title: '',
+    slug: '',
+    summary: '',
+    content: '',
+    tags: '',
+    status: 'draft',
+    coverImage: '',
+  });
+
   const [message, setMessage] = useState('');
-
-  // State for the list of existing projects
   const [projects, setProjects] = useState([]);
-
-  // State for the list of existing blogs
-  const [blogs, setBlogs] = useState([]);
-  
   const [isLoading, setIsLoading] = useState(true);
 
+  // --- FETCH DATA ---
   useEffect(() => {
     const fetchProjects = async () => {
-      setIsLoading(true); // Start the "50s" timer (visually)
+      setIsLoading(true);
       try {
         const apiUrl = import.meta.env.VITE_API_URL;
         const res = await fetch(`${apiUrl}/api/projects`);
@@ -35,7 +42,6 @@ const Admin = () => {
       } catch (error) {
         console.error('Error fetching projects:', error);
       } finally {
-        // This runs AFTER the server wakes up (whether it took 1s or 50s)
         setIsLoading(false);
       }
     };
@@ -43,6 +49,7 @@ const Admin = () => {
     fetchProjects();
   }, []);
 
+  // --- PROJECT HANDLERS ---
   const handleTextChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -51,15 +58,61 @@ const Admin = () => {
     setFiles(e.target.files);
   };
 
+  // --- BLOG HANDLERS (NEW) ---
+  const handleBlogTextChange = (e) => {
+    setBlogFormData({ ...blogFormData, [e.target.name]: e.target.value });
+  };
+
+  const handleBlogSubmit = async (e) => {
+    e.preventDefault();
+    if (!adminKey) {
+      alert('Please enter your Admin Key first.');
+      return;
+    }
+
+    setMessage('Posting Blog...');
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const res = await fetch(`${apiUrl}/api/blog`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // Blogs are JSON only (no file uploads for now)
+          'x-admin-secret': adminKey,
+        },
+        body: JSON.stringify(blogFormData),
+      });
+
+      if (res.ok) {
+        setMessage('Blog Post Created!');
+        // Reset Form
+        setBlogFormData({
+          title: '',
+          slug: '',
+          summary: '',
+          content: '',
+          tags: '',
+          status: 'draft',
+          coverImage: '',
+        });
+      } else {
+        const errorData = await res.json();
+        alert(`Failed: ${errorData.message}`);
+        setMessage('');
+      }
+    } catch (error) {
+      console.error(error);
+      setMessage('Server Error');
+    }
+  };
+
+  // --- PROJECT SUBMIT ---
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('Uploading...');
+    setMessage('Uploading Project...');
     const data = new FormData();
 
-    // Append standard fields
     Object.keys(formData).forEach((key) => data.append(key, formData[key]));
-
-    // Append files
     for (let i = 0; i < files.length; i++) {
       data.append('images', files[i]);
     }
@@ -84,7 +137,6 @@ const Admin = () => {
         });
         setFiles([]);
 
-        // Re-fetch projects to update the list immediately
         const refreshRes = await fetch(`${apiUrl}/api/projects`);
         const refreshData = await refreshRes.json();
         setProjects(refreshData);
@@ -99,8 +151,7 @@ const Admin = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this project? This cannot be undone.'))
-      return;
+    if (!window.confirm('Are you sure you want to delete this project?')) return;
 
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
@@ -114,7 +165,6 @@ const Admin = () => {
 
       if (res.ok) {
         alert('Project Deleted!');
-        // Filter the deleted project out of the state immediately (faster than re-fetching)
         setProjects(projects.filter((p) => p._id !== id));
       } else {
         const errorData = await res.json();
@@ -126,11 +176,8 @@ const Admin = () => {
     }
   };
 
-  // 1. Accept 'currentStatus' so we can toggle it
   const handleStatus = async (id, currentStatus) => {
-    if (!window.confirm('Are you sure you want to change the status of this project?')) return;
-
-    // 2. Determine the NEW status (Toggle logic)
+    if (!window.confirm('Change status?')) return;
     const newStatus = currentStatus === 'completed' ? 'in-progress' : 'completed';
 
     try {
@@ -141,14 +188,11 @@ const Admin = () => {
           'Content-Type': 'application/json',
           'x-admin-secret': adminKey,
         },
-        // 3. FIX: Send the new status in the body!
         body: JSON.stringify({ status: newStatus }),
       });
 
       if (res.ok) {
-        alert('Project Status Changed!');
-
-        // 4. FIX: Use .map() to update ONE item, not .filter()
+        alert('Status Changed!');
         setProjects((prevProjects) =>
           prevProjects.map((p) => (p._id === id ? { ...p, status: newStatus } : p))
         );
@@ -158,7 +202,7 @@ const Admin = () => {
       }
     } catch (error) {
       console.error(error);
-      alert('Error updating status'); // Fixed typo (was "deleting")
+      alert('Error updating status');
     }
   };
 
@@ -169,18 +213,23 @@ const Admin = () => {
           <span>&larr;</span> Back
         </Link>
       </nav>
+
       <div className="admin-container">
         <h1>Admin Dashboard</h1>
 
+        {/* --- GLOBAL ADMIN KEY --- */}
         <div
           style={{
             marginBottom: '20px',
             padding: '15px',
             border: '1px solid #ddd',
             borderRadius: '8px',
+            background: '#fff',
           }}
         >
-          <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '5px' }}>
+          <label
+            style={{ fontWeight: 'bold', display: 'block', marginBottom: '5px', color: '#333' }}
+          >
             🔒 Enter Admin Key to Enable Actions:
           </label>
           <input
@@ -188,20 +237,32 @@ const Admin = () => {
             value={adminKey}
             onChange={(e) => setAdminKey(e.target.value)}
             placeholder="Secret Key..."
-            style={{ width: '100%', padding: '8px' }}
+            style={{ width: '100%', padding: '8px', border: '1px solid #ccc' }}
           />
         </div>
 
+        {/* ========================== */}
+        {/* PROJECT SECTION      */}
+        {/* ========================== */}
+        <h2 style={{ borderBottom: '2px solid #333', paddingBottom: '10px', marginTop: '40px' }}>
+          🛠️ Project Management
+        </h2>
+
         <div
           className="admin-grid"
-          style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '40px',
+            marginBottom: '60px',
+          }}
         >
-          {/* LEFT COLUMN: CREATE FORM */}
+          {/* LEFT: ADD PROJECT */}
           <div className="form-section">
-            <h2>Add New Project</h2>
+            <h3>Add New Project</h3>
             <div className="form" style={{ marginTop: 0 }}>
               <form onSubmit={handleSubmit} encType="multipart/form-data">
-                <label>Project Title:</label>
+                <label>Title:</label>
                 <input
                   type="text"
                   name="title"
@@ -230,7 +291,7 @@ const Admin = () => {
                   required
                 />
 
-                <label>Tags (comma separated):</label>
+                <label>Tags:</label>
                 <input
                   type="text"
                   name="tags"
@@ -239,8 +300,7 @@ const Admin = () => {
                   placeholder="React, MongoDB"
                 />
 
-                <label>Project Images:</label>
-                {/* --- FIX 2: Added onChange={handleFileChange} here --- */}
+                <label>Images:</label>
                 <input
                   type="file"
                   name="images"
@@ -249,44 +309,41 @@ const Admin = () => {
                   onChange={handleFileChange}
                 />
 
-                <label>GitHub Repo Link:</label>
+                <label>Links:</label>
                 <input
                   type="text"
                   name="repoLink"
                   value={formData.repoLink}
                   onChange={handleTextChange}
+                  placeholder="GitHub URL"
                 />
-
-                <label>Live Demo Link:</label>
                 <input
                   type="text"
                   name="demoLink"
                   value={formData.demoLink}
                   onChange={handleTextChange}
+                  placeholder="Live Demo URL"
                 />
 
                 <button type="submit">Upload Project</button>
               </form>
-              {message && <p style={{ marginTop: '10px' }}>{message}</p>}
+              {message && <p style={{ marginTop: '10px', fontWeight: 'bold' }}>{message}</p>}
             </div>
           </div>
 
-          {/* RIGHT COLUMN: MANAGE PROJECTS */}
+          {/* RIGHT: MANAGE PROJECTS */}
           <div className="list-section">
-            <h2>Manage Projects</h2>
-
-            {/* STATE 1: LOADING (Waiting for the 50s wakeup) */}
+            <h3>Manage Projects</h3>
             {isLoading ? (
               <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
                 <div className="spinner" style={{ marginBottom: '15px', fontSize: '2rem' }}>
                   ⏳
                 </div>
                 <h3>Waking up server...</h3>
-                <p>This may take up to 50 seconds on the free tier.</p>
+                <p>This may take up to 50 seconds.</p>
               </div>
             ) : projects.length > 0 ? (
-              /* STATE 2: PROJECTS FOUND */
-              <div className="project-list">
+              <div className="project-list" style={{ maxHeight: '600px', overflowY: 'auto' }}>
                 {projects.map((project) => (
                   <div
                     key={project._id}
@@ -316,60 +373,129 @@ const Admin = () => {
                       <button
                         onClick={() => handleStatus(project._id, project.status)}
                         style={{
-                          backgroundColor: '#007bff', // Blue for "Edit/Change"
+                          backgroundColor: '#007bff',
                           color: 'white',
                           padding: '5px 10px',
                           border: 'none',
                           cursor: 'pointer',
-                          marginRight: '10px',
+                          margin: '0 5px',
                         }}
                       >
-                        {/* Show text based on what clicking will DO */}
                         {project.status === 'completed' ? 'Mark In-Progress' : 'Mark Completed'}
                       </button>
-                      <Link
-                        to={`/edit/${project._id}`}
-                        className="btn-link"
-                        style={{
-                          display: 'inline-block',
-                          background: '#444', // Dark gray to distinguish from main buttons
-                          border: '1px solid #666',
-                        }}
-                      >
-                        ⚙️ Edit Project
-                      </Link>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              /* STATE 3: SERVER AWAKE, BUT NO PROJECTS (Your new message) */
               <div
                 style={{
                   textAlign: 'center',
                   padding: '30px',
                   border: '2px dashed #ccc',
-                  borderRadius: '8px',
                   color: '#888',
                 }}
               >
                 <h3>No Projects Found</h3>
-                <p>There are currently no projects to show.</p>
-                <p style={{ fontSize: '0.8rem' }}>
-                  Use the form on the left to add your first one!
-                </p>
               </div>
             )}
           </div>
         </div>
-        <nav className="nav">
-          <Link to="/">
-            <span>&larr;</span> Back
-          </Link>
-        </nav>
+
+        {/* ========================== */}
+        {/* BLOG SECTION       */}
+        {/* ========================== */}
+        <h2 style={{ borderBottom: '2px solid #333', paddingBottom: '10px' }}>
+          ✍️ Blog Management
+        </h2>
+
+        <div
+          className="admin-grid"
+          style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '40px' }}
+        >
+          <div className="form-section" style={{ maxWidth: '800px' }}>
+            <h3>Write New Blog Post</h3>
+            <div className="form" style={{ marginTop: 0 }}>
+              <form onSubmit={handleBlogSubmit}>
+                <label>Blog Title:</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={blogFormData.title}
+                  onChange={handleBlogTextChange}
+                  required
+                  placeholder="My First Post"
+                />
+
+                <label>Custom URL Slug (Optional):</label>
+                <input
+                  type="text"
+                  name="slug"
+                  value={blogFormData.slug}
+                  onChange={handleBlogTextChange}
+                  placeholder="my-first-post (leave blank to auto-generate)"
+                />
+
+                <label>Status:</label>
+                <select
+                  name="status"
+                  value={blogFormData.status}
+                  onChange={handleBlogTextChange}
+                  style={{ padding: '10px', width: '100%', marginBottom: '10px' }}
+                >
+                  <option value="draft">Draft (Private)</option>
+                  <option value="published">Published (Public)</option>
+                </select>
+
+                <label>Summary (Preview Text):</label>
+                <textarea
+                  name="summary"
+                  value={blogFormData.summary}
+                  onChange={handleBlogTextChange}
+                  rows="3"
+                  required
+                  placeholder="A short description for the home page..."
+                />
+
+                <label>Content (Markdown Supported):</label>
+                <textarea
+                  name="content"
+                  value={blogFormData.content}
+                  onChange={handleBlogTextChange}
+                  rows="15"
+                  required
+                  placeholder="# My Heading&#10;&#10;Write your post content here..."
+                  style={{ fontFamily: 'monospace' }}
+                />
+
+                <label>Tags:</label>
+                <input
+                  type="text"
+                  name="tags"
+                  value={blogFormData.tags}
+                  onChange={handleBlogTextChange}
+                  placeholder="Tutorial, JavaScript, Life"
+                />
+
+                <label>Cover Image URL (Optional):</label>
+                <input
+                  type="text"
+                  name="coverImage"
+                  value={blogFormData.coverImage}
+                  onChange={handleBlogTextChange}
+                  placeholder="https://..."
+                />
+
+                <button type="submit" style={{ backgroundColor: '#28a745' }}>
+                  Publish Blog Post
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );
-};;
+};
 
 export default Admin;
