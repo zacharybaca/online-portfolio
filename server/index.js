@@ -68,7 +68,7 @@ connect(mongoUri)
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('Could not connect to MongoDB', err));
 
-// 4. DEFINE THE SCHEMA
+// 4. DEFINE THE PROJECT SCHEMA
 const projectSchema = new Schema({
   title: String,
   description: String,
@@ -85,6 +85,55 @@ const projectSchema = new Schema({
 });
 
 const Project = model('Project', projectSchema);
+
+// DEFINE THE BLOG POST SCHEMA
+const blogSchema = new Schema(
+  {
+    // 1. Core Content
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    content: {
+      type: String,
+      required: true,
+      // PRO TIP: Store this as Markdown so you can easily write code blocks
+    },
+    summary: {
+      type: String,
+      required: true,
+      // A short 1-2 sentence preview for the main blog page
+    },
+
+    // 2. Metadata & SEO
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      // Example: "my-first-post". Used for URLs like: stackbyzach.dev/blog/my-first-post
+    },
+    tags: [String], // e.g. ["React", "Tutorial", "Career"]
+
+    // 3. Visuals
+    coverImage: String, // URL to the main header image
+
+    // 4. Admin Workflow
+    status: {
+      type: String,
+      enum: ['draft', 'published'],
+      default: 'draft',
+      // Allows you to save work without the world seeing it
+    },
+  },
+  {
+    timestamps: true, // AUTOMATICALLY adds 'createdAt' and 'updatedAt' fields
+  }
+);
+
+const BlogPost = model('BlogPost', blogSchema);
 
 // 5. CREATE ROUTES
 
