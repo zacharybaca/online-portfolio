@@ -123,6 +123,42 @@ const Admin = () => {
     }
   };
 
+  // 1. Accept 'currentStatus' so we can toggle it
+  const handleStatus = async (id, currentStatus) => {
+    if (!window.confirm('Are you sure you want to change the status of this project?')) return;
+
+    // 2. Determine the NEW status (Toggle logic)
+    const newStatus = currentStatus === 'completed' ? 'in-progress' : 'completed';
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const res = await fetch(`${apiUrl}/api/projects/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-secret': adminKey,
+        },
+        // 3. FIX: Send the new status in the body!
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (res.ok) {
+        alert('Project Status Changed!');
+
+        // 4. FIX: Use .map() to update ONE item, not .filter()
+        setProjects((prevProjects) =>
+          prevProjects.map((p) => (p._id === id ? { ...p, status: newStatus } : p))
+        );
+      } else {
+        const errorData = await res.json();
+        alert(`Failed: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Error updating status'); // Fixed typo (was "deleting")
+    }
+  };
+
   return (
     <>
       <nav className="nav">
@@ -274,6 +310,20 @@ const Admin = () => {
                       >
                         Delete
                       </button>
+                      <button
+                        onClick={() => handleStatus(project._id, project.status)}
+                        style={{
+                          backgroundColor: '#007bff', // Blue for "Edit/Change"
+                          color: 'white',
+                          padding: '5px 10px',
+                          border: 'none',
+                          cursor: 'pointer',
+                          marginRight: '10px',
+                        }}
+                      >
+                        {/* Show text based on what clicking will DO */}
+                        {project.status === 'completed' ? 'Mark In-Progress' : 'Mark Completed'}
+                      </button>
                       <Link
                         to={`/edit/${project._id}`}
                         className="btn-link"
@@ -317,6 +367,6 @@ const Admin = () => {
       </div>
     </>
   );
-};
+};;
 
 export default Admin;
