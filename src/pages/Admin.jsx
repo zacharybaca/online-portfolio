@@ -19,6 +19,9 @@ const Admin = () => {
   // State for the list of existing projects
   const [projects, setProjects] = useState([]);
 
+  // State for the list of existing blogs
+  const [blogs, setBlogs] = useState([]);
+  
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
