@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Card from 'react-bootstrap/Card'; // Optional, but looks nice for the login box
+import ListGroup from 'react-bootstrap/ListGroup';
 
 const Admin = () => {
-  const [adminKey, setAdminKey] = useState('');
+  // 1. STATE: We check sessionStorage immediately to see if we are already logged in
+  const [adminKey, setAdminKey] = useState(() => sessionStorage.getItem('adminKey') || '');
+  const [isLoggedIn, setIsLoggedIn] = useState(() => !!sessionStorage.getItem('adminKey'));
 
   // --- PROJECT STATE ---
   const [formData, setFormData] = useState({
@@ -15,7 +19,7 @@ const Admin = () => {
   });
   const [files, setFiles] = useState([]);
 
-  // --- BLOG STATE (NEW) ---
+  // --- BLOG STATE ---
   const [blogFormData, setBlogFormData] = useState({
     title: '',
     slug: '',
@@ -30,8 +34,10 @@ const Admin = () => {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // --- FETCH DATA ---
+  // 2. FETCH DATA (Only runs if logged in!)
   useEffect(() => {
+    if (!isLoggedIn) return; // Don't fetch if not logged in
+
     const fetchProjects = async () => {
       setIsLoading(true);
       try {
@@ -47,7 +53,62 @@ const Admin = () => {
     };
 
     fetchProjects();
-  }, []);
+  }, [isLoggedIn]); // Re-run when user logs in
+
+  // --- LOGIN HANDLER (NEW) ---
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const inputKey = e.target.elements.keyInput.value;
+
+    if (!inputKey.trim()) {
+      alert('Please enter a key.');
+      return;
+    }
+
+    // 1. SET LOADING STATE (Optional, adds polish)
+    const submitBtn = e.target.querySelector('button');
+    const originalText = submitBtn.innerText;
+    submitBtn.innerText = 'Verifying...';
+    submitBtn.disabled = true;
+
+    try {
+      // 2. ASK SERVER: "Is this key valid?"
+      // We use '/api/blog/all' because it requires the admin key
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const res = await fetch(`${apiUrl}/api/blog/all`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-secret': inputKey, // Send the key to test it
+        },
+      });
+
+      if (res.ok) {
+        // 3. SUCCESS: Key is correct!
+        setAdminKey(inputKey);
+        setIsLoggedIn(true);
+        sessionStorage.setItem('adminKey', inputKey);
+      } else {
+        // 4. FAILURE: Server rejected it
+        alert('❌ Access Denied: Incorrect Admin Key');
+        submitBtn.innerText = originalText;
+        submitBtn.disabled = false;
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Server Error: Could not verify key.');
+      submitBtn.innerText = originalText;
+      submitBtn.disabled = false;
+    }
+  };
+
+  // --- LOGOUT HANDLER (NEW) ---
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setAdminKey('');
+    sessionStorage.removeItem('adminKey');
+    setProjects([]); // Clear sensitive data from screen
+  };
 
   // --- PROJECT HANDLERS ---
   const handleTextChange = (e) => {
@@ -58,34 +119,25 @@ const Admin = () => {
     setFiles(e.target.files);
   };
 
-  // --- BLOG HANDLERS (NEW) ---
+  // --- BLOG HANDLERS ---
   const handleBlogTextChange = (e) => {
     setBlogFormData({ ...blogFormData, [e.target.name]: e.target.value });
   };
 
   const handleBlogSubmit = async (e) => {
     e.preventDefault();
-    if (!adminKey) {
-      alert('Please enter your Admin Key first.');
-      return;
-    }
-
     setMessage('Posting Blog...');
 
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
       const res = await fetch(`${apiUrl}/api/blog`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json', // Blogs are JSON only (no file uploads for now)
-          'x-admin-secret': adminKey,
-        },
+        headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminKey },
         body: JSON.stringify(blogFormData),
       });
 
       if (res.ok) {
         setMessage('Blog Post Created!');
-        // Reset Form
         setBlogFormData({
           title: '',
           slug: '',
@@ -137,6 +189,7 @@ const Admin = () => {
         });
         setFiles([]);
 
+        // Refresh List
         const refreshRes = await fetch(`${apiUrl}/api/projects`);
         const refreshData = await refreshRes.json();
         setProjects(refreshData);
@@ -151,18 +204,13 @@ const Admin = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this project?')) return;
-
+    if (!window.confirm('Delete this project?')) return;
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
       const res = await fetch(`${apiUrl}/api/projects/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-secret': adminKey,
-        },
+        headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminKey },
       });
-
       if (res.ok) {
         alert('Project Deleted!');
         setProjects(projects.filter((p) => p._id !== id));
@@ -184,10 +232,7 @@ const Admin = () => {
       const apiUrl = import.meta.env.VITE_API_URL;
       const res = await fetch(`${apiUrl}/api/projects/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-secret': adminKey,
-        },
+        headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminKey },
         body: JSON.stringify({ status: newStatus }),
       });
 
@@ -206,40 +251,95 @@ const Admin = () => {
     }
   };
 
+  // =========================================================
+  // 3. THE "GATEKEEPER" RENDER
+  // If not logged in, show the Login "Dialog" instead of the Dashboard
+  // =========================================================
+  if (!isLoggedIn) {
+    return (
+      <div
+        style={{
+          height: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          background: '#f4f4f4',
+        }}
+      >
+        <div
+          style={{
+            background: 'white',
+            padding: '40px',
+            borderRadius: '10px',
+            boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+            textAlign: 'center',
+            maxWidth: '400px',
+            width: '100%',
+          }}
+        >
+          <h2>🔒 Admin Access</h2>
+          <p>Please enter your secret key to continue.</p>
+          <form onSubmit={handleLogin}>
+            <input
+              name="keyInput"
+              type="password"
+              placeholder="Enter Admin Key"
+              style={{ width: '100%', padding: '10px', margin: '20px 0', fontSize: '1.1rem' }}
+              autoFocus
+            />
+            <button
+              type="submit"
+              style={{
+                width: '100%',
+                padding: '10px',
+                background: '#007bff',
+                color: 'white',
+                border: 'none',
+                fontSize: '1rem',
+                cursor: 'pointer',
+              }}
+            >
+              Access Dashboard
+            </button>
+          </form>
+          <div style={{ marginTop: '20px' }}>
+            <Link to="/">← Back to Portfolio</Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // =========================================================
+  // 4. THE ACTUAL DASHBOARD (Only renders if logged in)
+  // =========================================================
   return (
     <>
-      <nav className="nav">
+      <nav
+        className="nav"
+        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+      >
         <Link to="/">
           <span>&larr;</span> Back
         </Link>
+        {/* LOGOUT BUTTON */}
+        <button
+          onClick={handleLogout}
+          style={{
+            background: 'transparent',
+            border: '1px solid #333',
+            padding: '5px 10px',
+            cursor: 'pointer',
+          }}
+        >
+          Logout 🔓
+        </button>
       </nav>
 
       <div className="admin-container">
         <h1>Admin Dashboard</h1>
 
-        {/* --- GLOBAL ADMIN KEY --- */}
-        <div
-          style={{
-            marginBottom: '20px',
-            padding: '15px',
-            border: '1px solid #ddd',
-            borderRadius: '8px',
-            background: '#fff',
-          }}
-        >
-          <label
-            style={{ fontWeight: 'bold', display: 'block', marginBottom: '5px', color: '#333' }}
-          >
-            🔒 Enter Admin Key to Enable Actions:
-          </label>
-          <input
-            type="password"
-            value={adminKey}
-            onChange={(e) => setAdminKey(e.target.value)}
-            placeholder="Secret Key..."
-            style={{ width: '100%', padding: '8px', border: '1px solid #ccc' }}
-          />
-        </div>
+        {/* Removed the Key Input from here - it's handled by the login screen now! */}
 
         {/* ========================== */}
         {/* PROJECT SECTION      */}
