@@ -1,10 +1,12 @@
 import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
+import ReCAPTCHA from 'react-google-recaptcha'; // 1. NEW IMPORT
 
 const About = () => {
   const form = useRef();
   const [status, setStatus] = useState('');
+  const [capVal, setCapVal] = useState(null); // 2. NEW STATE FOR CAPTCHA
 
   const skills = [
     'JavaScript (ES6+)',
@@ -32,13 +34,19 @@ const About = () => {
 
   const sendEmail = (e) => {
     e.preventDefault();
+
+    // 3. NEW CHECK: Stop if captcha is missing
+    if (!capVal) {
+      setStatus('⚠️ Please verify you are not a robot.');
+      return;
+    }
+
     setStatus('Sending...');
 
     // --- EMAILJS CONFIGURATION ---
-    // Make sure these match your dashboard at https://dashboard.emailjs.com/
-    const SERVICE_ID = 'service_9kukvd9'; // From your earlier code
-    const TEMPLATE_ID = 'template_epflkrw'; // From your earlier code
-    const PUBLIC_KEY = 'hrwzRdjpbVP720IcV'; // ⚠️ REPLACE THIS with your actual Public Key
+    const SERVICE_ID = 'service_9kukvd9';
+    const TEMPLATE_ID = 'template_epflkrw';
+    const PUBLIC_KEY = 'hrwzRdjpbVP720IcV';
 
     emailjs
       .sendForm(SERVICE_ID, TEMPLATE_ID, form.current, {
@@ -48,6 +56,7 @@ const About = () => {
         () => {
           setStatus('Email Successfully Sent!');
           e.target.reset();
+          setCapVal(null); // 4. RESET CAPTCHA ON SUCCESS
         },
         (error) => {
           console.error('EmailJS Error:', error);
@@ -92,7 +101,6 @@ const About = () => {
               </p>
 
               <div className="form">
-                {/* Ref attached here so EmailJS can read the inputs */}
                 <form ref={form} id="contactForm" onSubmit={sendEmail}>
                   <label htmlFor="name">Enter Your Name:</label>
                   <input id="name" type="text" name="name" required />
@@ -103,7 +111,18 @@ const About = () => {
                   <label htmlFor="message">Enter A Message:</label>
                   <textarea id="message" name="message" cols="30" rows="5" required></textarea>
 
-                  <button type="submit">Submit</button>
+                  {/* 5. NEW WIDGET */}
+                  <div style={{ margin: '20px 0' }}>
+                    <ReCAPTCHA
+                      sitekey="6LeLwGAsAAAAAMuHpFmfjEz7wVf_UjPEFq_D9u86"
+                      onChange={(val) => setCapVal(val)}
+                    />
+                  </div>
+
+                  {/* Disable button until verified (Optional, but good UX) */}
+                  <button type="submit" disabled={!capVal}>
+                    Submit
+                  </button>
 
                   {status && <p style={{ marginTop: '10px', fontWeight: 'bold' }}>{status}</p>}
                 </form>
@@ -118,7 +137,6 @@ const About = () => {
                 <li key={index}>{skill}</li>
               ))}
             </ul>
-            {/* Links Section */}
             <a
               className="btn-link"
               href="/documents/software-engineer-resume.pdf"
