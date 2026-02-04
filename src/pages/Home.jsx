@@ -6,9 +6,15 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
 
   // Default to the "Tech Network" image
-  const [selectedBg, setSelectedBg] = useState(
-    'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop'
-  );
+  const [selectedBg, setSelectedBg] = useState(() => {
+    const savedBackground = localStorage.getItem('background');
+
+    // 2. Return it if it exists, otherwise return the default URL
+    return (
+      savedBackground ||
+      'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop'
+    );
+  });
 
   const backgroundOptions = [
     {
@@ -42,6 +48,7 @@ const Home = () => {
 
     // 2. APPLY NEW: Set variable for CSS to use
     document.body.style.setProperty('--bg-image', `url('${selectedBg}')`);
+    localStorage.setItem('background', selectedBg)
   }, [selectedBg]);
 
   useEffect(() => {
