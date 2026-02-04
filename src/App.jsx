@@ -18,6 +18,7 @@ import BlogFeed from './components/BlogFeed';
 function App() {
   // State to track if the splash screen is visible
   const [showSplash, setShowSplash] = useState(true);
+  const [blogPosts, setBlogPosts] = useState([]);
 
   return (
     <>
@@ -32,7 +33,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
-            <Route path="/blogs" element={<BlogFeed />} />
+            <Route path="/blogs" element={<BlogFeed blogPosts={blogPosts} setBlogPosts={setBlogPosts}/>} />
 
             {/* Dynamic Project Route */}
             <Route path="/project/:id" element={<ProjectDetail />} />
