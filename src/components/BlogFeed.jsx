@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { Link } from 'react-router-dom';
 
-const BlogFeed = () => {
-  const [blogPosts, setBlogPosts] = useState([]);
+const BlogFeed = ({ blogPosts, setBlogPosts }) => {
 
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL;
