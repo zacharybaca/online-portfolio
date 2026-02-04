@@ -1,19 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
   // 1. State for Theme
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    // Check specifically if the string is 'true'.
+    // If savedTheme is null (first visit), default to true.
+    return savedTheme !== null ? savedTheme === 'true' : true;
+  });
 
-  // 2. Toggle Function
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
+  // 2. THE FIX: Use useEffect to sync State, LocalStorage, and CSS
+  useEffect(() => {
+    // Save to storage (converts boolean to string automatically)
+    localStorage.setItem('theme', isDarkMode);
 
+    // Apply CSS classes based on the state
     if (isDarkMode) {
-      document.body.classList.add('light-mode');
-    } else {
       document.body.classList.remove('light-mode');
+    } else {
+      document.body.classList.add('light-mode');
     }
+  }, [isDarkMode]); // This runs every time isDarkMode changes
+
+  // 3. Toggle Function (Now much simpler)
+  const toggleTheme = () => {
+    setIsDarkMode((prevMode) => !prevMode);
   };
 
   return (
@@ -21,10 +33,8 @@ const Sidebar = () => {
       <div className="sidebar-info-box">
         {/* --- FIXED LOGO SECTION --- */}
         <div className="logo-container">
-          {/* Use the SINGLE original file. The CSS will handle the transparency. */}
           <img src="/images/logo.png" alt="Stack by Zach" className="logo-image" />
         </div>
-        {/* -------------------------- */}
 
         {/* Theme Toggle Button */}
         <button
