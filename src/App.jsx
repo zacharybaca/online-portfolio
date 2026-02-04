@@ -39,7 +39,7 @@ function App() {
             <Route path="/project/:id" element={<ProjectDetail />} />
 
             {/* Admin Routes */}
-            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin" element={<Admin blogPosts={blogPosts}/>} />
             <Route path="/edit/:id" element={<EditProject />} />
           </Routes>
         </Layout>
