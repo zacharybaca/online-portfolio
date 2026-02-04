@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react'; // Added useState back
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { Link } from 'react-router-dom';
 
-const BlogFeed = ({ blogPosts, setBlogPosts }) => {
+// REMOVED props. Now it manages its own data.
+const BlogFeed = () => {
+  const [blogPosts, setBlogPosts] = useState([]); // Restored local state
 
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -25,20 +27,17 @@ const BlogFeed = ({ blogPosts, setBlogPosts }) => {
       {blogPosts.length > 0 ? (
         blogPosts.map((blog) => (
           <Card key={blog._id} className="blog-card" style={{ width: '18rem' }}>
-            {/* 1. IMAGE */}
             <Card.Img
               variant="top"
               src={blog.coverImage || 'https://via.placeholder.com/150'}
               style={{ height: '180px', objectFit: 'cover' }}
             />
 
-            {/* 2. TITLE & SUMMARY */}
             <Card.Body>
               <Card.Title>{blog.title}</Card.Title>
               <Card.Text>{blog.summary}</Card.Text>
             </Card.Body>
 
-            {/* 3. DETAILS LIST (Replaced "Cras justo odio" with real data) */}
             <ListGroup className="list-group-flush">
               <ListGroup.Item>📅 {new Date(blog.createdAt).toLocaleDateString()}</ListGroup.Item>
               <ListGroup.Item>
@@ -46,9 +45,7 @@ const BlogFeed = ({ blogPosts, setBlogPosts }) => {
               </ListGroup.Item>
             </ListGroup>
 
-            {/* 4. LINK AT BOTTOM */}
             <Card.Body>
-              {/* using 'as={Link}' makes the Bootstrap Card.Link work with React Router */}
               <Card.Link as={Link} to={`/blog/${blog.slug}`}>
                 Read Post
               </Card.Link>
