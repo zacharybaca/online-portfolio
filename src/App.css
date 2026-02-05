@@ -21,7 +21,8 @@
 /* Light Mode Overrides */
 body.light-mode {
   /* 1. Allow the image to show, but use a LIGHT gradient overlay instead of the dark one */
-  background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), var(--bg-image) !important;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), var(--bg-image) !important;
 
   /* 2. Ensure background fits correctly */
   background-size: cover;

@@ -25,10 +25,10 @@ const BlogFeed = () => {
       style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'center' }}
     >
       <nav className="nav">
-          <Link to="/">
-            <span>&larr;</span> Back
-          </Link>
-        </nav>
+        <Link to="/">
+          <span>&larr;</span> Back
+        </Link>
+      </nav>
 
       {blogPosts.length > 0 ? (
         blogPosts.map((blog) => (
@@ -63,11 +63,10 @@ const BlogFeed = () => {
       )}
 
       <nav className="nav">
-          <Link to="/">
-            <span>&larr;</span> Back
-          </Link>
-        </nav>
-
+        <Link to="/">
+          <span>&larr;</span> Back
+        </Link>
+      </nav>
     </div>
   );
 };
