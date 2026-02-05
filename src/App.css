@@ -749,3 +749,27 @@ nav a span {
   border-radius: 10px;
   border: 2px solid beige;
 }
+
+/* --- BOOTSTRAP CAROUSEL OVERRIDES --- */
+
+/* 1. Fix Arrows in Light Mode: Turn them black */
+body.light-mode .carousel-control-prev-icon,
+body.light-mode .carousel-control-next-icon {
+  filter: invert(1) grayscale(100);
+}
+
+/* 2. Fix Dots (Indicators) in Light Mode: Turn them black */
+body.light-mode .carousel-indicators button {
+  background-color: #000 !important;
+}
+
+/* 3. Optional: Make the caption background look better in Light Mode */
+body.light-mode .carousel-caption {
+  background: rgba(255, 255, 255, 0.8) !important; /* White box */
+}
+
+body.light-mode .carousel-caption h3,
+body.light-mode .carousel-caption p {
+  color: #000 !important; /* Black text */
+  text-shadow: none !important;
+}
