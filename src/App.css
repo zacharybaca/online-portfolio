@@ -322,6 +322,22 @@ body.light-mode .logo-image {
   letter-spacing: 1px;
 }
 
+/* --- MENU BUTTON --- */
+/* .menu-icon {
+  display: block;
+  margin: 0 auto 20px auto;
+  padding: 8px 16px;
+  background: var(--accent-color);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+} */
+
 /* --- QR CODE --- */
 .qr-image {
   display: block;
@@ -708,19 +724,6 @@ body.light-mode .theme-selector {
 
 /* Desktop */
 @media screen and (min-width: 1024px) {
-  .sidebar {
-    left: 0;
-  }
-
-  .header {
-    display: none;
-  }
-
-  .wrapper {
-    margin-left: 300px;
-    width: calc(100% - 300px);
-  }
-
   .inner-wrapper {
     max-width: 100%;
   }
