@@ -5,7 +5,7 @@ import Sidebar from './Sidebar';
 
 // 1. ACCEPT 'children' AS A PROP
 const Layout = ({ children }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => window.innerWidth > 1024);
 
   const appStyle = {
     transform: isSidebarOpen ? 'translateX(300px)' : 'translateX(0px)',
