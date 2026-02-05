@@ -2,10 +2,14 @@ import React, { useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext'
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Image from 'react-bootstrap/Image';
+import Row from 'react-bootstrap/Row';
 
 const Sidebar = () => {
   // 1. State for Theme
-  const { isDarkMode, setIsDarkMode } = useTheme();
+  const { isDarkMode, toggleTheme } = useTheme();
 
   // 2. THE FIX: Use useEffect to sync State, LocalStorage, and CSS
   useEffect(() => {
@@ -19,11 +23,6 @@ const Sidebar = () => {
       document.body.classList.add('light-mode');
     }
   }, [isDarkMode]); // This runs every time isDarkMode changes
-
-  // 3. Toggle Function (Now much simpler)
-  const toggleTheme = () => {
-    setIsDarkMode((prevMode) => !prevMode);
-  };
 
   return (
     <div id="my-info" className="sidebar">
@@ -49,9 +48,13 @@ const Sidebar = () => {
           </Button>
         </Link>
 
-        <div className="thumbnail-box">
-          <img className="thumbnail" src="/images/profile-pic.jpg" alt="Zachary Baca" />
-        </div>
+        <Container>
+          <Row>
+            <Col xs={6} md={4}>
+              <Image className="thumbnail" src="/images/profile-pic.jpg" roundedCircle />
+            </Col>
+          </Row>
+        </Container>
 
         <div className="dev-intro-box">
           <h5 id="name-heading">Zachary Baca</h5>
