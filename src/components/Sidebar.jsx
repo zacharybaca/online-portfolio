@@ -5,7 +5,7 @@ import { useTheme } from '../context/ThemeContext'
 
 const Sidebar = () => {
   // 1. State for Theme
-  const [isDarkMode, setIsDarkMode] = useTheme();
+  const { isDarkMode, setIsDarkMode } = useTheme();
 
   // 2. THE FIX: Use useEffect to sync State, LocalStorage, and CSS
   useEffect(() => {
