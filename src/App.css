@@ -20,16 +20,15 @@
 
 /* Light Mode Overrides */
 body.light-mode {
-  /* 1. CRITICAL: Force the background variable to be empty */
-  --bg-image: none !important;
+  /* 1. Allow the image to show, but use a LIGHT gradient overlay instead of the dark one */
+  background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), var(--bg-image) !important;
 
-  /* 2. CRITICAL: Force the background to be the light color */
-  background-color: #f4f4f4 !important;
+  /* 2. Ensure background fits correctly */
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
 
-  /* 3. CRITICAL: Force the image layer to be removed */
-  background-image: none !important;
-
-  /* Standard Light Variables */
+  /* Standard Light Variables (Keep these) */
   --bg-primary: #f4f4f4;
   --bg-secondary: #ffffff;
   --text-primary: #1a1a1a;
