@@ -46,7 +46,7 @@ const Sidebar = () => {
         </button>
 
         <div className="thumbnail-box">
-          <img className="thumbnail" src="/images/profile.jpg" alt="Zachary Baca" />
+          <img className="thumbnail" src="/images/profile-pic.jpg" alt="Zachary Baca" />
         </div>
 
         <div className="dev-intro-box">
