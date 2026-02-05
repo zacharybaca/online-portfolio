@@ -1,15 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext'
 
 const Sidebar = () => {
   // 1. State for Theme
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem('theme');
-    // Check specifically if the string is 'true'.
-    // If savedTheme is null (first visit), default to true.
-    return savedTheme !== null ? savedTheme === 'true' : true;
-  });
+  const [isDarkMode, setIsDarkMode] = useTheme();
 
   // 2. THE FIX: Use useEffect to sync State, LocalStorage, and CSS
   useEffect(() => {
