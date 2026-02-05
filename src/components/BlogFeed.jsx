@@ -24,6 +24,12 @@ const BlogFeed = () => {
       className="blog-grid"
       style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'center' }}
     >
+      <nav className="nav">
+          <Link to="/">
+            <span>&larr;</span> Back
+          </Link>
+        </nav>
+
       {blogPosts.length > 0 ? (
         blogPosts.map((blog) => (
           <Card key={blog._id} className="blog-card" style={{ width: '18rem' }}>
@@ -55,6 +61,13 @@ const BlogFeed = () => {
       ) : (
         <p>No Posts Available</p>
       )}
+
+      <nav className="nav">
+          <Link to="/">
+            <span>&larr;</span> Back
+          </Link>
+        </nav>
+
     </div>
   );
 };
