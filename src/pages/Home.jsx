@@ -1,22 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import ProjectCard from '../components/ProjectCard';
+import { useTheme } from '../context/ThemeContext'; // <--- Import context
 
 const Home = () => {
+  const { isDarkMode } = useTheme(); // Get current mode
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Default to the "Tech Network" image
-  const [selectedBg, setSelectedBg] = useState(() => {
-    const savedBackground = localStorage.getItem('background');
-
-    // 2. Return it if it exists, otherwise return the default URL
-    return (
-      savedBackground ||
-      'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop'
-    );
-  });
-
-  const backgroundOptions = [
+  // --- 1. DEFINE IMAGE OPTIONS ---
+  const darkOptions = [
     {
       name: 'Default (Tech Network)',
       value:
@@ -40,17 +32,61 @@ const Home = () => {
     },
   ];
 
-  // Effect to Apply Background
+  const lightOptions = [
+    { name: 'Dandelion Seeds', value: '/images/dandelion.jpg' },
+    { name: 'Green Field', value: '/images/field.jpg' },
+    { name: 'Mario World', value: '/images/mario.jpg' },
+    { name: 'Open Scenery', value: '/images/scenery.jpg' },
+    { name: 'Grass Texture', value: '/images/grass.jpg' },
+  ];
+
+  // Pick the list based on mode
+  const currentOptions = isDarkMode ? darkOptions : lightOptions;
+
+  // --- 2. SMART STATE INITIALIZATION ---
+  const [selectedBg, setSelectedBg] = useState(() => {
+    // We check both keys so we can load the correct one immediately
+    const savedDark = localStorage.getItem('bg_dark');
+    const savedLight = localStorage.getItem('bg_light');
+
+    if (isDarkMode) {
+      return savedDark || darkOptions[0].value;
+    } else {
+      return savedLight || lightOptions[0].value;
+    }
+  });
+
+  // --- 3. HANDLE THEME SWITCHING ---
+  // When isDarkMode changes, we need to swap the image displayed
   useEffect(() => {
-    // 1. CLEANUP: Remove hardcoded styles to let CSS classes work
+    const savedDark = localStorage.getItem('bg_dark') || darkOptions[0].value;
+    const savedLight = localStorage.getItem('bg_light') || lightOptions[0].value;
+
+    if (isDarkMode) {
+      setSelectedBg(savedDark);
+    } else {
+      setSelectedBg(savedLight);
+    }
+  }, [isDarkMode]);
+
+  // --- 4. APPLY BACKGROUND & SAVE ---
+  useEffect(() => {
+    // Clear styles first
     document.body.style.background = '';
     document.body.style.backgroundImage = '';
 
-    // 2. APPLY NEW: Set variable for CSS to use
+    // Apply new image
     document.body.style.setProperty('--bg-image', `url('${selectedBg}')`);
-    localStorage.setItem('background', selectedBg)
-  }, [selectedBg]);
 
+    // Save to the correct key
+    if (isDarkMode) {
+      localStorage.setItem('bg_dark', selectedBg);
+    } else {
+      localStorage.setItem('bg_light', selectedBg);
+    }
+  }, [selectedBg, isDarkMode]);
+
+  // Fetch Projects logic (Unchanged)
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL;
     fetch(`${apiUrl}/api/projects`)
@@ -77,12 +113,12 @@ const Home = () => {
         <h1>Hi, I'm Zach.</h1>
         <p>I am a Software Engineer based in La Porte, IN, specializing in the MERN stack.</p>
 
-        {/* --- ADDED CLASS NAME BELOW: "theme-selector" --- */}
         <div className="theme-selector" style={{ marginTop: '25px', display: 'inline-block' }}>
           <label
             style={{ marginRight: '10px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}
           >
-            🎨 Customize Theme:
+            {/* Dynamic Label Icon */}
+            {isDarkMode ? '🎨 Dark Theme:' : '☀️ Light Theme:'}
           </label>
           <select
             value={selectedBg}
@@ -91,14 +127,20 @@ const Home = () => {
               padding: '8px 12px',
               borderRadius: '5px',
               border: '1px solid var(--border-color)',
-              background: 'rgba(0,0,0,0.5)',
-              color: 'var(--text-primary)',
+              // In light mode, make the dropdown visible/readable
+              background: isDarkMode ? 'rgba(0,0,0,0.5)' : '#fff',
+              color: isDarkMode ? 'var(--text-primary)' : '#000',
               cursor: 'pointer',
               fontFamily: 'inherit',
             }}
           >
-            {backgroundOptions.map((option, index) => (
-              <option key={index} value={option.value} style={{ background: '#333' }}>
+            {/* Map over currentOptions (which swaps automatically) */}
+            {currentOptions.map((option, index) => (
+              <option
+                key={index}
+                value={option.value}
+                style={{ background: isDarkMode ? '#333' : '#fff' }}
+              >
                 {option.name}
               </option>
             ))}
@@ -124,7 +166,6 @@ const Home = () => {
               {completedProjects.length > 0 && (
                 <hr style={{ margin: '3rem 0', borderColor: 'var(--border-color)' }} />
               )}
-
               <h2 style={{ color: 'var(--text-primary)', margin: '1rem 0' }}>
                 🚧 Currently In Progress
               </h2>
