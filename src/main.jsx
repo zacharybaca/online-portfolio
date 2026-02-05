@@ -1,15 +1,17 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-// 1. IMPORT BrowserRouter
 import { BrowserRouter } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext'; 
 import './index.css';
 import App from './App.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    {/* 2. WRAP App inside BrowserRouter */}
     <BrowserRouter>
-      <App />
+      {/* 2. Wrap the entire App here */}
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
     </BrowserRouter>
   </StrictMode>
 );
