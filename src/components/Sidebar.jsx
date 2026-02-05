@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
@@ -44,6 +45,13 @@ const Sidebar = () => {
         >
           {isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
         </button>
+
+        {/* View Blog Section */}
+        <Link to="/blogs">
+          <Button className="theme-toggle-btn" variant="primary" size="lg" active>
+            📰 Read My Blogs
+          </Button>
+        </Link>
 
         <div className="thumbnail-box">
           <img className="thumbnail" src="/images/profile-pic.jpg" alt="Zachary Baca" />
