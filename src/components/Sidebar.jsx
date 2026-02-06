@@ -51,7 +51,7 @@ const Sidebar = () => {
         <Container>
           <Row>
             <Col xs={6} md={4}>
-              <Image className="thumbnail" src="/images/profile-pic.jpg" roundedCircle />
+              <Image src="/images/profile-pic.jpg" roundedCircle fluid />
             </Col>
           </Row>
         </Container>
