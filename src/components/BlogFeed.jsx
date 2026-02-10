@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
-import Button from 'react-bootstrap/Button'; 
+import Button from 'react-bootstrap/Button';
 import { Link } from 'react-router-dom';
 import BlogPost from './BlogPost';
 

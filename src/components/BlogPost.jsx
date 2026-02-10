@@ -8,12 +8,8 @@ const BlogPost = (props) => {
         <Modal.Title id="contained-modal-title-vcenter">{props.title || ''}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>
-            {props.content || ''}
-        </p>
-        <p>
-            {`Created At: ${props.timestamps}`}
-        </p>
+        <p>{props.content || ''}</p>
+        <p>{`Created At: ${props.timestamps}`}</p>
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={props.onHide}>Close</Button>
