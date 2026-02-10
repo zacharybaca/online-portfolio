@@ -189,11 +189,33 @@ import Carousel from 'react-bootstrap/Carousel';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import ProjectCard from '../components/ProjectCard';
+import ProgressBar from 'react-bootstrap/ProgressBar';
 
 const Home = () => {
   const { isDarkMode } = useTheme();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // 1. New State for the fake progress number (0 to 100)
+  const [progress, setProgress] = useState(0);
+
+  // 2. Simulation Effect
+  useEffect(() => {
+    let interval;
+    if (loading) {
+      interval = setInterval(() => {
+        setProgress((prev) => {
+          // If we reach 95%, stop and wait for the data (don't lie and say 100% yet)
+          if (prev >= 95) return prev;
+
+          // Increment by 1 every 500ms.
+          // 1% * 100 steps = 50 seconds. This matches your Render wake-up time perfectly.
+          return prev + 1;
+        });
+      }, 500);
+    }
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, [loading]);
 
   // --- 1. DEFINE IMAGE OPTIONS ---
   const darkOptions = [
@@ -281,8 +303,39 @@ const Home = () => {
   const completedProjects = projects.filter((p) => !p.status || p.status === 'completed');
   const inProgressProjects = projects.filter((p) => p.status === 'in-progress');
 
-  if (loading)
-    return <div style={{ color: 'var(--text-primary)', padding: '2rem' }}>Loading...</div>;
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '50vh', // Takes up half the screen height
+          padding: '20px',
+          color: 'var(--text-primary)',
+        }}
+      >
+        <h2 style={{ marginBottom: '20px', fontFamily: 'Modern' }}>Waking up the server...</h2>
+
+        <div style={{ width: '100%', maxWidth: '500px' }}>
+          {/* THE PROGRESS COMPONENT */}
+          <ProgressBar
+            animated
+            now={progress}
+            label={`${progress}%`}
+            variant="success" // Green color (or remove for default blue)
+            style={{ height: '30px', fontSize: '1rem' }}
+          />
+        </div>
+
+        <p style={{ marginTop: '15px', color: 'var(--text-secondary)', textAlign: 'center' }}>
+          This is hosted on a free tier service. <br />
+          Please allow up to 50 seconds for the initial cold start.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <>
