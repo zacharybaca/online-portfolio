@@ -132,7 +132,7 @@ const Home = () => {
           color: 'var(--text-primary)',
         }}
       >
-        <h2 style={{ marginBottom: '20px', fontFamily: 'Modern' }}>Waking up the server...</h2>
+        <h2 style={{ marginBottom: '20px', fontFamily: 'Modern' }}>Loading Projects...</h2>
 
         <div style={{ width: '100%', maxWidth: '500px' }}>
           {/* THE PROGRESS COMPONENT */}
@@ -146,8 +146,8 @@ const Home = () => {
         </div>
 
         <p style={{ marginTop: '15px', color: 'var(--text-secondary)', textAlign: 'center' }}>
-          This is hosted on a free tier service. <br />
-          Please allow up to 50 seconds for the initial cold start.
+          Projects may take a moment to initially load. <br />
+          Please allow up to 50 seconds for projects to fully load.
         </p>
       </div>
     );
