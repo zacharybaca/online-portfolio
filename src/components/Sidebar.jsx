@@ -29,7 +29,7 @@ const Sidebar = () => {
       <div className="sidebar-info-box">
         {/* --- FIXED LOGO SECTION --- */}
         <div className="logo-container">
-          <img src="/images/logo.png" alt="Stack by Zach" className="logo-image" />
+          <img src="/images/portfolio-logo-sketch.png" alt="Stack by Zach" className="logo-image" />
         </div>
 
         {/* Theme Toggle Button */}
