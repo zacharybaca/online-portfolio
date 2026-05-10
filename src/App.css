@@ -776,3 +776,44 @@ body.light-mode .carousel-caption p {
   color: #000 !important; /* Black text */
   text-shadow: none !important;
 }
+
+/* --- Add these to the end of your App.css --- */
+
+.certifications-sidebar {
+  margin-top: 40px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 20px;
+}
+
+.certifications-sidebar h6 {
+  margin-bottom: 15px;
+}
+
+.certifications-sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.certifications-sidebar li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.cert-qr-sidebar {
+  width: 100%;
+  max-width: 150px;
+  height: auto;
+  margin-bottom: 15px;
+  border: 4px solid var(--border-color);
+  border-radius: 5px;
+}
+
+.certifications-sidebar a {
+  font-size: 11px;
+  line-height: 1.4;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}

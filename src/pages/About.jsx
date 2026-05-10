@@ -1,12 +1,12 @@
 import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
-import ReCAPTCHA from 'react-google-recaptcha'; // 1. NEW IMPORT
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const About = () => {
   const form = useRef();
   const [status, setStatus] = useState('');
-  const [capVal, setCapVal] = useState(null); // 2. NEW STATE FOR CAPTCHA
+  const [capVal, setCapVal] = useState(null);
 
   const skills = [
     'JavaScript (ES6+)',
@@ -35,7 +35,6 @@ const About = () => {
   const sendEmail = (e) => {
     e.preventDefault();
 
-    // 3. NEW CHECK: Stop if captcha is missing
     if (!capVal) {
       setStatus('⚠️ Please verify you are not a robot.');
       return;
@@ -43,7 +42,6 @@ const About = () => {
 
     setStatus('Sending...');
 
-    // --- EMAILJS CONFIGURATION ---
     const SERVICE_ID = 'service_9kukvd9';
     const TEMPLATE_ID = 'template_epflkrw';
     const PUBLIC_KEY = 'hrwzRdjpbVP720IcV';
@@ -56,7 +54,7 @@ const About = () => {
         () => {
           setStatus('Email Successfully Sent!');
           e.target.reset();
-          setCapVal(null); // 4. RESET CAPTCHA ON SUCCESS
+          setCapVal(null);
         },
         (error) => {
           console.error('EmailJS Error:', error);
@@ -111,7 +109,6 @@ const About = () => {
                   <label htmlFor="message">Enter A Message:</label>
                   <textarea id="message" name="message" cols="30" rows="5" required></textarea>
 
-                  {/* 5. NEW WIDGET */}
                   <div style={{ margin: '20px 0' }}>
                     <ReCAPTCHA
                       sitekey="6LeLwGAsAAAAAMuHpFmfjEz7wVf_UjPEFq_D9u86"
@@ -119,7 +116,6 @@ const About = () => {
                     />
                   </div>
 
-                  {/* Disable button until verified (Optional, but good UX) */}
                   <button type="submit" disabled={!capVal}>
                     Submit
                   </button>
@@ -162,6 +158,27 @@ const About = () => {
             >
               GitHub
             </a>
+
+            {/* Certifications moved here */}
+            <div className="certifications-sidebar">
+              <h6>Certifications</h6>
+              <ul>
+                <li>
+                  <img
+                    src="/documents/v-school-qr-code.png"
+                    alt="V School Certificate QR Code"
+                    className="cert-qr-sidebar"
+                  />
+                  <a
+                    href="https://www.notion.so/V-School-Front-End-Web-Development-Certificate-9b1c8e5f0c7b4d2e9a1e5f8c3a2b6c"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    V School Front-End Web Development Certificate
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
