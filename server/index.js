@@ -72,11 +72,12 @@ connect(mongoUri)
 const projectSchema = new Schema({
   title: String,
   description: String,
+  challenge: String, // NEW: Technical hurdles
+  solution: String, // NEW: How you solved it
   imageUrls: [String],
   tags: [String],
   repoLink: String,
   demoLink: String,
-  // Status for "In Progress" section
   status: {
     type: String,
     enum: ['completed', 'in-progress'],
@@ -269,15 +270,13 @@ app.get('/api/projects', async (req, res) => {
 
 // POST: Add a new project (Handles Text + Files)
 app.post('/api/projects', upload.any(), async (req, res) => {
-  // Security Check
   if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
     return res.status(403).json({ message: 'Unauthorized' });
   }
 
   try {
-    const { title, description, tags, repoLink, demoLink, status } = req.body;
+    const { title, description, challenge, solution, tags, repoLink, demoLink, status } = req.body;
 
-    // Convert uploaded file objects into URL strings for the DB
     const imageUrls = (req.files || []).map((file) => {
       const folderName = sanitizeName(title || 'untitled-project');
       return `/images/projects/${folderName}/${file.filename}`;
@@ -286,6 +285,8 @@ app.post('/api/projects', upload.any(), async (req, res) => {
     const newProject = new Project({
       title,
       description,
+      challenge,
+      solution,
       tags: tags ? tags.split(',').map((t) => t.trim()) : [],
       imageUrls,
       repoLink,
@@ -302,47 +303,35 @@ app.post('/api/projects', upload.any(), async (req, res) => {
 
 // PUT: Update an existing project
 app.put('/api/projects/:id', upload.any(), async (req, res) => {
-  // 1. Security Check
   if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
     return res.status(403).json({ message: 'Unauthorized' });
   }
 
   try {
-    const { title, description, tags, repoLink, demoLink, status } = req.body;
-
-    // 2. Find the project
+    const { title, description, challenge, solution, tags, repoLink, demoLink, status } = req.body;
     const project = await Project.findById(req.params.id);
-    if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
-    }
+    if (!project) return res.status(404).json({ message: 'Project not found' });
 
-    // 3. Update Text Fields (only if provided)
     if (title) project.title = title;
     if (description) project.description = description;
+    if (challenge) project.challenge = challenge;
+    if (solution) project.solution = solution;
     if (tags) project.tags = tags.split(',').map((t) => t.trim());
     if (repoLink) project.repoLink = repoLink;
     if (demoLink) project.demoLink = demoLink;
     if (status) project.status = status;
 
-    // 4. Handle NEW Images (Append to existing list)
     if (req.files && req.files.length > 0) {
       const folderName = sanitizeName(project.title || 'untitled-project');
-      const newImageUrls = req.files.map((file) => {
-        return `/images/projects/${folderName}/${file.filename}`;
-      });
-
-      // Ensure array exists before pushing
-      if (!Array.isArray(project.imageUrls)) {
-        project.imageUrls = [];
-      }
-
+      const newImageUrls = req.files.map(
+        (file) => `/images/projects/${folderName}/${file.filename}`
+      );
       project.imageUrls.push(...newImageUrls);
     }
 
     await project.save();
     res.json(project);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: error.message });
   }
 });

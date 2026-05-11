@@ -7,39 +7,28 @@ const ProjectDetail = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // AUTOMATIC URL SWITCHING
-    const apiUrl = import.meta.env.VITE_API_URL;
-
-    fetch(`${apiUrl}/api/projects`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/projects`)
       .then((res) => res.json())
       .then((data) => {
-        // Find the specific project by ID
-        const found = data.find((p) => p._id === id);
-        setProject(found);
+        setProject(data.find((p) => p._id === id));
         setLoading(false);
       })
-      .catch((err) => {
-        console.error('Error fetching project details:', err);
-        setLoading(false);
-      });
+      .catch(() => setLoading(false));
   }, [id]);
 
-  if (loading) {
-    // UPDATED: Use theme variable for Light Mode visibility
-    return <div style={{ color: 'var(--text-primary)', padding: '2rem' }}>Loading Project...</div>;
-  }
-
-  if (!project) {
+  if (loading)
     return (
-      // UPDATED: Use theme variable for Light Mode visibility
+      <div style={{ color: 'var(--text-primary)', padding: '2rem' }}>Initializing System...</div>
+    );
+  if (!project)
+    return (
       <div style={{ color: 'var(--text-primary)', padding: '2rem' }}>
-        <h2>Project not found</h2>
-        <Link to="/" className="btn-link" style={{ display: 'inline-block', maxWidth: '100px' }}>
-          Go Back
+        <h2>Project Not Found</h2>
+        <Link to="/" className="btn-link">
+          Return Home
         </Link>
       </div>
     );
-  }
 
   return (
     <article className="portfolio-about">
@@ -52,8 +41,16 @@ const ProjectDetail = () => {
       <div className="inner-wrapper">
         <div className="project-info-box box">
           <h1 id="project-heading">{project.title}</h1>
+          <div className="tags" style={{ marginBottom: '1.5rem' }}>
+            {project.tags &&
+              project.tags.map((tag, i) => (
+                <span key={i} className="badge">
+                  {tag}
+                </span>
+              ))}
+          </div>
 
-          <div className="project-links" style={{ marginBottom: '1rem' }}>
+          <div className="project-links" style={{ marginBottom: '2rem' }}>
             {project.repoLink && (
               <a
                 href={project.repoLink}
@@ -62,36 +59,46 @@ const ProjectDetail = () => {
                 className="btn-link"
                 style={{ display: 'inline-block', marginRight: '10px' }}
               >
-                GitHub Repo
+                Source Code
               </a>
             )}
-
             {project.demoLink && (
               <a
                 href={project.demoLink}
                 target="_blank"
                 rel="noreferrer"
                 className="btn-link"
-                style={{ display: 'inline-block', marginRight: '10px' }}
+                style={{ display: 'inline-block' }}
               >
                 Live Demo
               </a>
             )}
           </div>
 
-          <p>{project.description}</p>
+          <div className="case-study-section">
+            <h3>Overview</h3>
+            <p>{project.description}</p>
+
+            {project.challenge && (
+              <>
+                <h3 style={{ marginTop: '2rem', color: '#ff6b6b' }}>Technical Challenge</h3>
+                <p>{project.challenge}</p>
+              </>
+            )}
+
+            {project.solution && (
+              <>
+                <h3 style={{ marginTop: '2rem', color: '#51cf66' }}>Solution & Implementation</h3>
+                <p>{project.solution}</p>
+              </>
+            )}
+          </div>
         </div>
 
         <div className="project-images box" style={{ background: 'transparent', border: 'none' }}>
           {project.imageUrls &&
-            project.imageUrls.map((url, index) => (
-              <img
-                key={index}
-                src={url}
-                alt={`${project.title} screenshot ${index + 1}`}
-                className="project-img"
-                style={{ marginBottom: '20px', width: '100%' }}
-              />
+            project.imageUrls.map((url, i) => (
+              <img key={i} src={url} alt="Screenshot" className="project-img" />
             ))}
         </div>
       </div>

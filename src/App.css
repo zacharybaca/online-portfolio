@@ -817,3 +817,47 @@ body.light-mode .carousel-caption p {
   color: var(--text-secondary);
   text-transform: uppercase;
 }
+
+/* --- Case Study & Badges --- */
+.case-study-section h3 {
+  font-size: 1.1rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.case-study-section p {
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+}
+
+.skill-group h6 {
+  font-size: 0.75rem;
+  margin-bottom: 8px;
+  color: var(--text-muted);
+}
+
+.cert-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.cert-item a {
+  font-size: 10px;
+  text-align: center;
+}
+
+/* Ensure badges look consistent */
+.badge {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* Sidebar Specifics */
+.certifications-sidebar {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}

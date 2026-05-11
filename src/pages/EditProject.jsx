@@ -12,6 +12,8 @@ const EditProject = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    challenge: '', // Add this
+    solution: '', // Add this
     tags: '',
     repoLink: '',
     demoLink: '',
@@ -147,6 +149,24 @@ const EditProject = () => {
 
           <label>Tags:</label>
           <input type="text" name="tags" value={formData.tags} onChange={handleTextChange} />
+
+          <label>Technical Challenge:</label>
+          <textarea
+            name="challenge"
+            value={formData.challenge}
+            onChange={handleTextChange}
+            rows="3"
+            placeholder="What was the hardest part of this project?"
+          />
+
+          <label>Solution:</label>
+          <textarea
+            name="solution"
+            value={formData.solution}
+            onChange={handleTextChange}
+            rows="3"
+            placeholder="How did you solve the technical hurdle?"
+          />
 
           <label>Add MORE Images (Optional):</label>
           <input type="file" name="images" multiple accept="image/*" onChange={handleFileChange} />
