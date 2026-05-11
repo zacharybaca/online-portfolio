@@ -7,8 +7,6 @@ import BlogPost from './BlogPost';
 
 const BlogFeed = () => {
   const [blogPosts, setBlogPosts] = useState([]);
-
-  // 2. Add state to manage the Modal and the Selected Post
   const [modalShow, setModalShow] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
 
@@ -16,75 +14,75 @@ const BlogFeed = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
     fetch(`${apiUrl}/api/blog`)
       .then((res) => res.json())
-      .then((data) => {
-        setBlogPosts(data);
-      })
-      .catch((error) => {
-        console.error('Error fetching blog posts', error);
-      });
+      .then((data) => setBlogPosts(data))
+      .catch((err) => console.error(err));
   }, []);
 
-  // 3. Helper function to handle the click
   const handleReadPost = (blog) => {
-    setSelectedPost(blog); // Save the specific blog data
-    setModalShow(true); // Open the modal
+    setSelectedPost(blog);
+    setModalShow(true);
   };
 
   return (
     <div className="portfolio-intro">
-      {' '}
-      {/* Changed container class for better spacing */}
-      {/* Top Nav */}
       <nav className="nav" style={{ marginBottom: '20px' }}>
         <Link to="/">
           <span>&larr;</span> Back
         </Link>
       </nav>
+
       <div
         className="blog-grid"
-        style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'center' }}
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '20px',
+        }}
       >
         {blogPosts.length > 0 ? (
           blogPosts.map((blog) => (
-            <Card key={blog._id} className="blog-card" style={{ width: '18rem' }}>
+            <Card
+              key={blog._id}
+              className="blog-card"
+              onClick={() => handleReadPost(blog)} // Entire card is now clickable
+              style={{
+                background: 'var(--bg-secondary)',
+                border: '1px solid var(--border-color)',
+                color: 'var(--text-primary)',
+                cursor: 'pointer',
+              }}
+            >
               <Card.Img
                 variant="top"
-                src={blog.coverImage || 'https://via.placeholder.com/150'}
+                src={blog.coverImage || 'https://via.placeholder.com/300x180'}
                 style={{ height: '180px', objectFit: 'cover' }}
               />
-
               <Card.Body>
-                <Card.Title>{blog.title}</Card.Title>
-                <Card.Text>{blog.summary}</Card.Text>
+                <Card.Title style={{ fontFamily: 'Modern' }}>{blog.title}</Card.Title>
+                <Card.Text style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                  {blog.summary}
+                </Card.Text>
               </Card.Body>
-
               <ListGroup className="list-group-flush">
-                <ListGroup.Item>📅 {new Date(blog.createdAt).toLocaleDateString()}</ListGroup.Item>
-                <ListGroup.Item>
-                  🏷️ {blog.tags.length > 0 ? blog.tags.join(', ') : 'No Tags'}
+                <ListGroup.Item style={{ background: 'transparent', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                  📅 {new Date(blog.createdAt).toLocaleDateString()}
+                </ListGroup.Item>
+                <ListGroup.Item style={{ background: 'transparent', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                  🏷️ {blog.tags && blog.tags.length > 0 ? blog.tags.join(', ') : 'General'}
                 </ListGroup.Item>
               </ListGroup>
-
               <Card.Body>
-                {/* 4. Changed Link to Button/OnClick */}
-                <Button variant="primary" onClick={() => handleReadPost(blog)}>
-                  Read Post
+                <Button variant="outline-light" size="sm">
+                  Read Article
                 </Button>
               </Card.Body>
             </Card>
           ))
         ) : (
-          <p>No Posts Available</p>
+          <p>No published entries found.</p>
         )}
       </div>
-      {/* Bottom Nav */}
-      <nav className="nav" style={{ marginTop: '20px' }}>
-        <Link to="/">
-          <span>&larr;</span> Back
-        </Link>
-      </nav>
-      {/* 5. Render the Modal Component */}
-      {/* We check if selectedPost exists before trying to access its properties */}
+
       <BlogPost
         show={modalShow}
         onHide={() => setModalShow(false)}
@@ -94,6 +92,12 @@ const BlogFeed = () => {
           selectedPost?.createdAt ? new Date(selectedPost.createdAt).toLocaleDateString() : ''
         }
       />
+
+      <nav className="nav" style={{ marginTop: '40px' }}>
+        <Link to="/">
+          <span>&larr;</span> Back
+        </Link>
+      </nav>
     </div>
   );
 };

@@ -861,3 +861,79 @@ body.light-mode .carousel-caption p {
   padding-top: 1.5rem;
   border-top: 1px solid var(--border-color);
 }
+
+.case-study-section h3 {
+  font-size: 1.1rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  color: var(--text-primary);
+}
+
+.case-study-section p {
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.modal-content {
+  border: 1px solid var(--border-color);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.35em 0.65em;
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25rem;
+  background-color: var(--border-color);
+  color: var(--text-primary);
+  text-transform: uppercase;
+}
+
+.blog-card:hover {
+  transform: translateY(-5px);
+  transition: transform 0.3s ease;
+  border-color: var(--text-muted) !important;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: rgba(0,0,0,0.5);
+  border-radius: 50%;
+  padding: 20px;
+}
+
+/* --- Blog Enhancements --- */
+.blog-card {
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.blog-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--text-muted) !important;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Light mode specific adjustment for the card text */
+body.light-mode .blog-card {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .blog-card:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Modal styling for Dark/Light Mode toggle consistency */
+.blog-post-modal .modal-content {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+}
+
+.blog-post-modal .btn-close {
+  filter: var(--logo-filter); /* Reuses your existing invert logic for the close X button */
+}

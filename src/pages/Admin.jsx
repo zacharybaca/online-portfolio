@@ -5,18 +5,17 @@ const Admin = () => {
   // 1. STATE
   const [adminKey, setAdminKey] = useState(() => sessionStorage.getItem('adminKey') || '');
   const [isLoggedIn, setIsLoggedIn] = useState(() => !!sessionStorage.getItem('adminKey'));
-
   const [projects, setProjects] = useState([]);
-  const [blogs, setBlogs] = useState([]); // <--- NEW: Local state for blogs
+  const [blogs, setBlogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState('');
 
-  // --- FORM STATES ---
+  // 2. FORM STATES
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    challenge: '', // Add this
-    solution: '', // Add this
+    challenge: '',
+    solution: '',
     tags: '',
     repoLink: '',
     demoLink: '',
@@ -34,74 +33,58 @@ const Admin = () => {
     coverImage: '',
   });
 
-  // 2. FETCH DATA (Projects AND Blogs)
+  // Track if we are editing a blog (null = creating new)
+  const [editingBlogId, setEditingBlogId] = useState(null);
+
+  // 3. FETCH DATA
   useEffect(() => {
     if (!isLoggedIn) return;
-
     const fetchData = async () => {
       setIsLoading(true);
       const apiUrl = import.meta.env.VITE_API_URL;
-      const key = sessionStorage.getItem('adminKey'); // Get key for headers
-
+      const key = sessionStorage.getItem('adminKey');
       try {
-        // A. Fetch Projects
         const projectRes = await fetch(`${apiUrl}/api/projects`);
         const projectData = await projectRes.json();
         setProjects(projectData);
 
-        // B. Fetch Blogs (Hit the /all endpoint to see drafts)
         const blogRes = await fetch(`${apiUrl}/api/blog/all`, {
           headers: { 'x-admin-secret': key },
         });
         const blogData = await blogRes.json();
-
-        // Safety check to ensure we map over an array
-        if (Array.isArray(blogData)) {
-          setBlogs(blogData);
-        }
+        if (Array.isArray(blogData)) setBlogs(blogData);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Fetch error:', error);
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchData();
   }, [isLoggedIn]);
 
-  // --- AUTH HANDLERS ---
+  // 4. AUTH HANDLERS
   const handleLogin = async (e) => {
     e.preventDefault();
     const inputKey = e.target.elements.keyInput.value;
-    if (!inputKey.trim()) {
-      alert('Please enter a key.');
-      return;
-    }
-
     const submitBtn = e.target.querySelector('button');
     submitBtn.innerText = 'Verifying...';
     submitBtn.disabled = true;
-
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
       const res = await fetch(`${apiUrl}/api/blog/all`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', 'x-admin-secret': inputKey },
       });
-
       if (res.ok) {
         setAdminKey(inputKey);
         setIsLoggedIn(true);
         sessionStorage.setItem('adminKey', inputKey);
       } else {
-        alert('❌ Access Denied: Incorrect Admin Key');
+        alert('Access Denied');
         submitBtn.innerText = 'Access Dashboard';
         submitBtn.disabled = false;
       }
     } catch (error) {
-      console.error(error);
-      alert('Server Error');
-      submitBtn.innerText = 'Access Dashboard';
       submitBtn.disabled = false;
     }
   };
@@ -114,20 +97,31 @@ const Admin = () => {
     setBlogs([]);
   };
 
-  // --- INPUT HANDLERS ---
+  // 5. INPUT HANDLERS
   const handleTextChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
   const handleFileChange = (e) => setFiles(e.target.files);
-  const handleBlogTextChange = (e) =>
-    setBlogFormData({ ...blogFormData, [e.target.name]: e.target.value });
 
-  // --- PROJECT ACTIONS ---
+  const handleBlogTextChange = (e) => {
+    const { name, value } = e.target;
+    // Auto-generate slug for new posts only
+    if (name === 'title' && !blogFormData.slug && !editingBlogId) {
+      const autoSlug = value
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+      setBlogFormData({ ...blogFormData, title: value, slug: autoSlug });
+    } else {
+      setBlogFormData({ ...blogFormData, [name]: value });
+    }
+  };
+
+  // 6. PROJECT ACTIONS
   const handleSubmitProject = async (e) => {
     e.preventDefault();
-    setMessage('Uploading Project...');
+    setMessage('Uploading...');
     const data = new FormData();
     Object.keys(formData).forEach((key) => data.append(key, formData[key]));
     for (let i = 0; i < files.length; i++) data.append('images', files[i]);
-
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
       const res = await fetch(`${apiUrl}/api/projects`, {
@@ -135,48 +129,42 @@ const Admin = () => {
         headers: { 'x-admin-secret': adminKey },
         body: data,
       });
-
       if (res.ok) {
-        setMessage('Project added!');
+        setMessage('Project added');
         setFormData({
           title: '',
           description: '',
+          challenge: '',
+          solution: '',
           tags: '',
           repoLink: '',
           demoLink: '',
           status: 'completed',
         });
         setFiles([]);
-        // Refresh Projects
-        const refreshRes = await fetch(`${apiUrl}/api/projects`);
-        setProjects(await refreshRes.json());
-      } else {
-        setMessage('Error creating project');
+        const refresh = await fetch(`${apiUrl}/api/projects`);
+        setProjects(await refresh.json());
       }
     } catch (error) {
-      setMessage(`Server Error: ${error}`);
+      setMessage('Server error');
     }
   };
 
   const handleDeleteProject = async (id) => {
-    if (!window.confirm('Delete this project?')) return;
+    if (!window.confirm('Confirm deletion?')) return;
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
       const res = await fetch(`${apiUrl}/api/projects/${id}`, {
         method: 'DELETE',
         headers: { 'x-admin-secret': adminKey },
       });
-      if (res.ok) {
-        alert('Project Deleted!');
-        setProjects(projects.filter((p) => p._id !== id));
-      }
+      if (res.ok) setProjects(projects.filter((p) => p._id !== id));
     } catch (error) {
-      alert(`Error deleting project: ${error}`);
+      alert('Delete failed');
     }
   };
 
   const handleProjectStatus = async (id, currentStatus) => {
-    if (!window.confirm('Change status?')) return;
     const newStatus = currentStatus === 'completed' ? 'in-progress' : 'completed';
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
@@ -185,28 +173,29 @@ const Admin = () => {
         headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminKey },
         body: JSON.stringify({ status: newStatus }),
       });
-      if (res.ok) {
+      if (res.ok)
         setProjects((prev) => prev.map((p) => (p._id === id ? { ...p, status: newStatus } : p)));
-      }
     } catch (error) {
-      alert(`Error updating status: ${error}`);
+      alert('Status update failed');
     }
   };
 
-  // --- BLOG ACTIONS (NEW & SEPARATE) ---
+  // 7. BLOG ACTIONS
   const handleBlogSubmit = async (e) => {
     e.preventDefault();
-    setMessage('Posting Blog...');
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const url = editingBlogId ? `${apiUrl}/api/blog/${editingBlogId}` : `${apiUrl}/api/blog`;
+    const method = editingBlogId ? 'PUT' : 'POST';
+
     try {
-      const apiUrl = import.meta.env.VITE_API_URL;
-      const res = await fetch(`${apiUrl}/api/blog`, {
-        method: 'POST',
+      const res = await fetch(url, {
+        method: method,
         headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminKey },
         body: JSON.stringify(blogFormData),
       });
 
       if (res.ok) {
-        setMessage('Blog Post Created!');
+        setMessage(editingBlogId ? 'Blog Updated!' : 'Blog Published!');
         setBlogFormData({
           title: '',
           slug: '',
@@ -216,43 +205,48 @@ const Admin = () => {
           status: 'draft',
           coverImage: '',
         });
-        // Refresh Blogs
-        const refreshRes = await fetch(`${apiUrl}/api/blog/all`, {
+        setEditingBlogId(null);
+        const refresh = await fetch(`${apiUrl}/api/blog/all`, {
           headers: { 'x-admin-secret': adminKey },
         });
-        setBlogs(await refreshRes.json());
-      } else {
-        const errorData = await res.json();
-        alert(`Failed: ${errorData.message}`);
+        setBlogs(await refresh.json());
       }
     } catch (error) {
-      setMessage(`Server Error: ${error}`);
+      console.error(error);
+      setMessage('Error saving blog.');
     }
   };
 
-  // NEW: Specific handler for deleting BLOGS
+  const handleEditBlog = (blog) => {
+    setEditingBlogId(blog._id);
+    setBlogFormData({
+      title: blog.title || '',
+      slug: blog.slug || '',
+      summary: blog.summary || '',
+      content: blog.content || '',
+      tags: blog.tags ? blog.tags.join(', ') : '',
+      status: blog.status || 'draft',
+      coverImage: blog.coverImage || '',
+    });
+    // Scroll to form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleDeleteBlog = async (id) => {
-    if (!window.confirm('Delete this blog post?')) return;
+    if (!window.confirm('Delete blog?')) return;
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
-      // Note the URL is /api/blog/, NOT /api/projects/
       const res = await fetch(`${apiUrl}/api/blog/${id}`, {
         method: 'DELETE',
         headers: { 'x-admin-secret': adminKey },
       });
-      if (res.ok) {
-        alert('Blog Deleted!');
-        setBlogs(blogs.filter((b) => b._id !== id));
-      }
+      if (res.ok) setBlogs(blogs.filter((b) => b._id !== id));
     } catch (error) {
-      alert(`Error deleting blog: ${error}`);
+      alert('Delete failed');
     }
   };
 
-  // NEW: Specific handler for BLOG status
   const handleBlogStatus = async (id, currentStatus) => {
-    if (!window.confirm(`Change status to ${currentStatus === 'draft' ? 'Published' : 'Draft'}?`))
-      return;
     const newStatus = currentStatus === 'draft' ? 'published' : 'draft';
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
@@ -261,15 +255,13 @@ const Admin = () => {
         headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminKey },
         body: JSON.stringify({ status: newStatus }),
       });
-      if (res.ok) {
+      if (res.ok)
         setBlogs((prev) => prev.map((b) => (b._id === id ? { ...b, status: newStatus } : b)));
-      }
     } catch (error) {
-      alert(`Error updating blog status: ${error}`);
+      alert('Update failed');
     }
   };
 
-  // --- LOGIN UI ---
   if (!isLoggedIn) {
     return (
       <div
@@ -292,13 +284,13 @@ const Admin = () => {
             width: '100%',
           }}
         >
-          <h2>🔒 Admin Access</h2>
+          <h2>Admin Authentication</h2>
           <form onSubmit={handleLogin}>
             <input
               name="keyInput"
               type="password"
-              placeholder="Enter Admin Key"
-              style={{ width: '100%', padding: '10px', margin: '20px 0', fontSize: '1.1rem' }}
+              placeholder="Key"
+              style={{ width: '100%', padding: '10px', margin: '20px 0' }}
               autoFocus
             />
             <button
@@ -309,27 +301,25 @@ const Admin = () => {
                 background: '#007bff',
                 color: 'white',
                 border: 'none',
-                fontSize: '1rem',
                 cursor: 'pointer',
               }}
             >
-              Access Dashboard
+              Login
             </button>
           </form>
           <div style={{ marginTop: '20px' }}>
-            <Link to="/">← Back to Portfolio</Link>
+            <Link to="/">Return to Site</Link>
           </div>
         </div>
       </div>
     );
   }
 
-  // --- DASHBOARD UI ---
   return (
     <>
       <nav
         className="nav"
-        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+        style={{ display: 'flex', justifyContent: 'space-between', padding: '20px' }}
       >
         <Link to="/">
           <span>&larr;</span> Back
@@ -343,175 +333,24 @@ const Admin = () => {
             cursor: 'pointer',
           }}
         >
-          Logout 🔓
+          Logout
         </button>
       </nav>
 
-      <div className="admin-container">
-        <h1>Admin Dashboard</h1>
+      <div className="admin-container" style={{ padding: '40px' }}>
+        <h1>Management Console</h1>
+        {message && <p style={{ color: 'green', fontWeight: 'bold' }}>{message}</p>}
 
-        {/* === PROJECTS === */}
-        <h2 style={{ borderBottom: '2px solid #333', paddingBottom: '10px', marginTop: '40px' }}>
-          🛠️ Project Management
-        </h2>
         <div
           className="admin-grid"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '40px',
-            marginBottom: '60px',
-          }}
+          style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}
         >
-          {/* Add Project Form */}
+          {/* BLOG FORM SECTION */}
           <div className="form-section">
-            <h3>Add New Project</h3>
-            <div className="form" style={{ marginTop: 0 }}>
-              <form onSubmit={handleSubmitProject} encType="multipart/form-data">
-                <label>Title:</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleTextChange}
-                  required
-                />
-                <label>Status:</label>
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleTextChange}
-                  style={{ padding: '10px', width: '100%', marginBottom: '10px' }}
-                >
-                  <option value="completed">Completed Project</option>
-                  <option value="in-progress">In Progress</option>
-                </select>
-                <label>Description:</label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleTextChange}
-                  rows="4"
-                  required
-                />
-                <label>Tags:</label>
-                <input type="text" name="tags" value={formData.tags} onChange={handleTextChange} />
-                <label>Images:</label>
-                <input
-                  type="file"
-                  name="images"
-                  multiple
-                  accept="image/*"
-                  onChange={handleFileChange}
-                />
-                <label>Technical Challenge:</label>
-                <textarea
-                  name="challenge"
-                  value={formData.challenge}
-                  onChange={handleTextChange}
-                  rows="3"
-                  placeholder="What was the hardest part of this project?"
-                />
-
-                <label>Solution:</label>
-                <textarea
-                  name="solution"
-                  value={formData.solution}
-                  onChange={handleTextChange}
-                  rows="3"
-                  placeholder="How did you solve the technical hurdle?"
-                />
-                <label>Links:</label>
-                <input
-                  type="text"
-                  name="repoLink"
-                  value={formData.repoLink}
-                  onChange={handleTextChange}
-                  placeholder="GitHub URL"
-                />
-                <input
-                  type="text"
-                  name="demoLink"
-                  value={formData.demoLink}
-                  onChange={handleTextChange}
-                  placeholder="Live Demo URL"
-                />
-                <button type="submit">Upload Project</button>
-              </form>
-              {message && <p style={{ marginTop: '10px', fontWeight: 'bold' }}>{message}</p>}
-            </div>
-          </div>
-
-          {/* List Projects */}
-          <div className="list-section">
-            <h3>Manage Projects</h3>
-            {isLoading ? (
-              <p>Loading...</p>
-            ) : projects.length > 0 ? (
-              <div className="project-list" style={{ maxHeight: '600px', overflowY: 'auto' }}>
-                {projects.map((project) => (
-                  <div
-                    key={project._id}
-                    style={{
-                      border: '1px solid #ccc',
-                      padding: '10px',
-                      marginBottom: '10px',
-                      borderRadius: '5px',
-                      background: '#f9f9f9',
-                      color: 'black',
-                    }}
-                  >
-                    <h4 style={{ margin: '0 0 5px 0' }}>{project.title}</h4>
-                    <div style={{ marginTop: '10px' }}>
-                      <button
-                        onClick={() => handleDeleteProject(project._id)}
-                        style={{
-                          backgroundColor: '#ff4d4d',
-                          color: 'white',
-                          padding: '5px 10px',
-                          border: 'none',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        Delete
-                      </button>
-                      <button
-                        onClick={() => handleProjectStatus(project._id, project.status)}
-                        style={{
-                          backgroundColor: '#007bff',
-                          color: 'white',
-                          padding: '5px 10px',
-                          border: 'none',
-                          cursor: 'pointer',
-                          margin: '0 5px',
-                        }}
-                      >
-                        {project.status === 'completed' ? 'Mark In-Progress' : 'Mark Completed'}
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p>No Projects Found</p>
-            )}
-          </div>
-        </div>
-
-        {/* === BLOGS === */}
-        <h2 style={{ borderBottom: '2px solid #333', paddingBottom: '10px' }}>
-          ✍️ Blog Management
-        </h2>
-        <div
-          className="admin-grid"
-          style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '40px' }}
-        >
-          {/* Add Blog Form */}
-          <div className="form-section" style={{ maxWidth: '800px' }}>
-            <h3>Write New Blog Post</h3>
-            <div className="form" style={{ marginTop: 0 }}>
+            <h3>{editingBlogId ? '✍️ Edit Blog Post' : '✍️ Write New Blog Post'}</h3>
+            <div className="form">
               <form onSubmit={handleBlogSubmit}>
-                <label>Blog Title:</label>
+                <label>Title:</label>
                 <input
                   type="text"
                   name="title"
@@ -519,129 +358,211 @@ const Admin = () => {
                   onChange={handleBlogTextChange}
                   required
                 />
+
                 <label>Slug:</label>
                 <input
                   type="text"
                   name="slug"
                   value={blogFormData.slug}
                   onChange={handleBlogTextChange}
-                  placeholder="leave blank to auto-generate"
+                  required
                 />
+
                 <label>Status:</label>
-                <select
-                  name="status"
-                  value={blogFormData.status}
-                  onChange={handleBlogTextChange}
-                  style={{ padding: '10px', width: '100%', marginBottom: '10px' }}
-                >
-                  <option value="draft">Draft (Private)</option>
-                  <option value="published">Published (Public)</option>
+                <select name="status" value={blogFormData.status} onChange={handleBlogTextChange}>
+                  <option value="draft">Draft</option>
+                  <option value="published">Published</option>
                 </select>
+
                 <label>Summary:</label>
                 <textarea
                   name="summary"
                   value={blogFormData.summary}
                   onChange={handleBlogTextChange}
-                  rows="3"
+                  rows="2"
                   required
                 />
+
                 <label>Content:</label>
                 <textarea
                   name="content"
                   value={blogFormData.content}
                   onChange={handleBlogTextChange}
-                  rows="15"
+                  rows="10"
                   required
-                  style={{ fontFamily: 'monospace' }}
                 />
+
                 <label>Tags:</label>
                 <input
                   type="text"
                   name="tags"
                   value={blogFormData.tags}
                   onChange={handleBlogTextChange}
+                  placeholder="comma, separated"
                 />
-                <label>Cover Image:</label>
+
+                <label>Cover Image URL:</label>
                 <input
                   type="text"
                   name="coverImage"
                   value={blogFormData.coverImage}
                   onChange={handleBlogTextChange}
                 />
-                <button type="submit" style={{ backgroundColor: '#28a745' }}>
-                  Publish Blog Post
+
+                <button
+                  type="submit"
+                  style={{ background: editingBlogId ? '#ffc107' : '#28a745', color: '#000' }}
+                >
+                  {editingBlogId ? 'Update Blog' : 'Publish Blog'}
                 </button>
+                {editingBlogId && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingBlogId(null);
+                      setBlogFormData({
+                        title: '',
+                        slug: '',
+                        summary: '',
+                        content: '',
+                        tags: '',
+                        status: 'draft',
+                        coverImage: '',
+                      });
+                    }}
+                    style={{ background: '#eee', color: '#000', marginTop: '10px' }}
+                  >
+                    Cancel Edit
+                  </button>
+                )}
+              </form>
+            </div>
+
+            <hr style={{ margin: '40px 0' }} />
+
+            {/* PROJECT FORM SECTION */}
+            <h3>🛠️ Register Project</h3>
+            <div className="form">
+              <form onSubmit={handleSubmitProject}>
+                <label>Project Title:</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleTextChange}
+                  required
+                />
+
+                <label>Status:</label>
+                <select name="status" value={formData.status} onChange={handleTextChange}>
+                  <option value="completed">Completed</option>
+                  <option value="in-progress">In Progress</option>
+                </select>
+
+                <label>Description:</label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleTextChange}
+                  required
+                />
+
+                <label>Tags:</label>
+                <input type="text" name="tags" value={formData.tags} onChange={handleTextChange} />
+
+                <label>Images:</label>
+                <input type="file" name="images" multiple onChange={handleFileChange} />
+
+                <label>Technical Challenge:</label>
+                <textarea name="challenge" value={formData.challenge} onChange={handleTextChange} />
+
+                <label>Solution:</label>
+                <textarea name="solution" value={formData.solution} onChange={handleTextChange} />
+
+                <label>Repo Link:</label>
+                <input
+                  type="text"
+                  name="repoLink"
+                  value={formData.repoLink}
+                  onChange={handleTextChange}
+                />
+
+                <label>Demo Link:</label>
+                <input
+                  type="text"
+                  name="demoLink"
+                  value={formData.demoLink}
+                  onChange={handleTextChange}
+                />
+
+                <button type="submit">Deploy Project</button>
               </form>
             </div>
           </div>
-        </div>
 
-        {/* List Blogs */}
-        <div className="list-section" style={{ marginTop: '40px' }}>
-          <h3>Manage Blogs</h3>
-          {/* We use 'blogs' state here, NOT 'blogPosts' prop */}
-          {isLoading ? (
-            <p>Loading...</p>
-          ) : blogs.length > 0 ? (
-            <div className="project-list" style={{ maxHeight: '600px', overflowY: 'auto' }}>
-              {blogs.map((blog) => (
+          {/* LIST SECTION */}
+          <div className="list-section">
+            <h3>Manage Blogs</h3>
+            <div style={{ maxHeight: '400px', overflowY: 'auto', marginBottom: '40px' }}>
+              {blogs.map((b) => (
                 <div
-                  key={blog._id}
+                  key={b._id}
                   style={{
                     border: '1px solid #ccc',
                     padding: '10px',
                     marginBottom: '10px',
-                    borderRadius: '5px',
-                    background: '#f9f9f9',
-                    color: 'black',
+                    background: '#fff',
+                    color: '#000',
                   }}
                 >
-                  <h4 style={{ margin: '0 0 5px 0' }}>
-                    {blog.title}
-                    <span
-                      style={{
-                        fontSize: '0.8rem',
-                        marginLeft: '10px',
-                        color: blog.status === 'draft' ? 'red' : 'green',
-                      }}
-                    >
-                      ({blog.status.toUpperCase()})
-                    </span>
-                  </h4>
+                  <strong>{b.title}</strong> ({b.status})
                   <div style={{ marginTop: '10px' }}>
-                    {/* FIX: Use specific Blog Handlers */}
-                    <button
-                      onClick={() => handleDeleteBlog(blog._id)}
-                      style={{
-                        backgroundColor: '#ff4d4d',
-                        color: 'white',
-                        padding: '5px 10px',
-                        border: 'none',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      Delete
+                    <button onClick={() => handleEditBlog(b)} style={{ marginRight: '5px' }}>
+                      Edit
                     </button>
                     <button
-                      onClick={() => handleBlogStatus(blog._id, blog.status)}
-                      style={{
-                        backgroundColor: '#007bff',
-                        color: 'white',
-                        padding: '5px 10px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        margin: '0 5px',
-                      }}
+                      onClick={() => handleBlogStatus(b._id, b.status)}
+                      style={{ marginRight: '5px' }}
                     >
-                      {blog.status === 'draft' ? 'Publish' : 'Unpublish'}
+                      {b.status === 'draft' ? 'Publish' : 'Unpublish'}
+                    </button>
+                    <button onClick={() => handleDeleteBlog(b._id)} style={{ color: 'red' }}>
+                      Delete
                     </button>
                   </div>
                 </div>
               ))}
             </div>
-          ) : (
-            <p>No Blogs Found</p>
-          )}
+
+            <h3>Manage Projects</h3>
+            <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+              {projects.map((p) => (
+                <div
+                  key={p._id}
+                  style={{
+                    border: '1px solid #ccc',
+                    padding: '10px',
+                    marginBottom: '10px',
+                    background: '#fff',
+                    color: '#000',
+                  }}
+                >
+                  <strong>{p.title}</strong> ({p.status})
+                  <div style={{ marginTop: '10px' }}>
+                    <button
+                      onClick={() => handleProjectStatus(p._id, p.status)}
+                      style={{ marginRight: '5px' }}
+                    >
+                      Toggle Status
+                    </button>
+                    <button onClick={() => handleDeleteProject(p._id)} style={{ color: 'red' }}>
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </>
