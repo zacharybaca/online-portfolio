@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 const Admin = () => {
@@ -22,6 +22,7 @@ const Admin = () => {
     status: 'completed',
   });
   const [files, setFiles] = useState([]);
+  const fileInputRef = useRef(null);
 
   const [blogFormData, setBlogFormData] = useState({
     title: '',
@@ -142,6 +143,8 @@ const Admin = () => {
           status: 'completed',
         });
         setFiles([]);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        
         const refresh = await fetch(`${apiUrl}/api/projects`);
         setProjects(await refresh.json());
       }
@@ -471,7 +474,13 @@ const Admin = () => {
                 <input type="text" name="tags" value={formData.tags} onChange={handleTextChange} />
 
                 <label>Images:</label>
-                <input type="file" name="images" multiple onChange={handleFileChange} />
+                <input 
+                  type="file" 
+                  name="images" 
+                  multiple 
+                  onChange={handleFileChange} 
+                  ref={fileInputRef} 
+                />
 
                 <label>Technical Challenge:</label>
                 <textarea name="challenge" value={formData.challenge} onChange={handleTextChange} />
