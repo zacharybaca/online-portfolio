@@ -22,6 +22,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.use('/images', express.static(path.join(__dirname, '../public/images')));
+
 // --- MULTER CONFIGURATION (For File Uploads) ---
 // Helper to clean project names for folders (e.g. "My App" -> "my-app")
 const sanitizeName = (name) => {
