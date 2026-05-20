@@ -3,7 +3,16 @@ import { Link } from 'react-router-dom';
 
 const ProjectCard = ({ data }) => {
   if (!data) return null;
-  const thumbnail = data.imageUrls?.[0] || 'https://placehold.co/600x400?text=No+Preview';
+  
+  const apiUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || '';
+  
+  const resolveImageUrl = (path) => {
+    if (!path) return 'https://placehold.co/600x400?text=No+Preview';
+    if (path.startsWith('http')) return path;
+    return `${apiUrl}/${path.replace(/^\//, '')}`;
+  };
+
+  const thumbnail = resolveImageUrl(data.imageUrls?.[0]);
 
   return (
     <div
