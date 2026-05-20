@@ -4,6 +4,14 @@ import { Link } from 'react-router-dom';
 const ProjectCarousel = ({ projects }) => {
   if (!projects || projects.length === 0) return null;
 
+  const apiUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || '';
+
+  const resolveImageUrl = (path) => {
+    if (!path) return 'https://via.placeholder.com/900x450';
+    if (path.startsWith('http')) return path;
+    return `${apiUrl}/${path.replace(/^\//, '')}`;
+  };
+
   return (
     <>
       <h2 style={{ color: 'var(--text-primary)', margin: '2rem 0 1rem' }}>Featured Engineering</h2>
@@ -23,7 +31,7 @@ const ProjectCarousel = ({ projects }) => {
               <div style={{ height: '450px', background: '#000' }}>
                 <img
                   className="d-block w-100"
-                  src={project.imageUrls?.[0] || 'https://via.placeholder.com/900x450'}
+                  src={resolveImageUrl(project.imageUrls?.[0])}
                   alt={project.title}
                   style={{ objectFit: 'cover', height: '100%', opacity: '0.7' }}
                 />
