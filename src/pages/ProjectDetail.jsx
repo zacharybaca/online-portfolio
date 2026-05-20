@@ -6,15 +6,23 @@ const ProjectDetail = () => {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const apiUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || '';
+
+  const resolveImageUrl = (path) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    return `${apiUrl}/${path.replace(/^\//, '')}`;
+  };
+
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/projects`)
+    fetch(`${apiUrl}/api/projects`)
       .then((res) => res.json())
       .then((data) => {
         setProject(data.find((p) => p._id === id));
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [id]);
+  }, [id, apiUrl]);
 
   if (loading)
     return (
@@ -98,7 +106,7 @@ const ProjectDetail = () => {
         <div className="project-images box" style={{ background: 'transparent', border: 'none' }}>
           {project.imageUrls &&
             project.imageUrls.map((url, i) => (
-              <img key={i} src={url} alt="Screenshot" className="project-img" />
+              <img key={i} src={resolveImageUrl(url)} alt="Screenshot" className="project-img" />
             ))}
         </div>
       </div>
