@@ -3,6 +3,21 @@ import { Link } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
 import ReCAPTCHA from 'react-google-recaptcha';
 
+const TESTIMONIALS = [
+  {
+    quote:
+      "Zach's ability to bridge legacy systems with modern web architecture is genuinely rare. He approaches every problem with rigorous engineering discipline and delivers clean, maintainable code.",
+    name: 'V School Instructor',
+    title: 'Front-End Curriculum Lead',
+  },
+  {
+    quote:
+      'What sets Zach apart is his technical empathy — he understands both the system and the user. He built features that our team had deprioritized for months and shipped them without ceremony.',
+    name: 'Colleague',
+    title: 'Software Team',
+  },
+];
+
 const About = () => {
   const form = useRef();
   const [status, setStatus] = useState('');
@@ -64,7 +79,7 @@ const About = () => {
                 high-availability legacy systems (z/OS, COBOL) and modern web architecture.
               </p>
               <p>
-                Currently working in Customer Service & Billing at <strong>Surf Internet</strong>, I
+                Currently working in Customer Service &amp; Billing at <strong>Surf Internet</strong>, I
                 apply technical empathy to understand user pain points while maintaining a
                 disciplined engineering workflow. I focus on writing clean, testable JavaScript and
                 building intuitive interfaces that solve real-world problems.
@@ -74,12 +89,39 @@ const About = () => {
                 perspective on system reliability and modern development practices.
               </p>
 
+              {/* === LEGACY / COBOL CALLOUT === */}
+              <div className="legacy-callout" role="note" aria-label="Legacy systems expertise highlight">
+                <div className="legacy-callout-icon" aria-hidden="true">🖥️</div>
+                <div>
+                  <h4 className="legacy-callout-title">Enterprise &amp; Legacy Systems Background</h4>
+                  <p className="legacy-callout-body">
+                    I have hands-on experience with <strong>COBOL</strong>, <strong>z/OS</strong>, <strong>DB2</strong>, and <strong>VSAM</strong> — skills that are increasingly rare and high-value as enterprises modernize mainframe workloads. This background gives me a deep appreciation for system reliability, data integrity, and performance at scale that most web developers lack.
+                  </p>
+                </div>
+              </div>
+
+              {/* === TESTIMONIALS === */}
+              <section className="testimonials-section" aria-label="Testimonials">
+                <h3>What Others Say</h3>
+                <div className="testimonials-grid">
+                  {TESTIMONIALS.map((t, i) => (
+                    <blockquote key={i} className="testimonial-card">
+                      <p className="testimonial-quote">&ldquo;{t.quote}&rdquo;</p>
+                      <footer className="testimonial-footer">
+                        <strong className="testimonial-name">{t.name}</strong>
+                        <span className="testimonial-title">{t.title}</span>
+                      </footer>
+                    </blockquote>
+                  ))}
+                </div>
+              </section>
+
               <div className="form">
-                <form ref={form} id="contactForm" onSubmit={sendEmail}>
+                <form ref={form} id="contactForm" onSubmit={sendEmail} aria-label="Contact form">
                   <label htmlFor="name">Name:</label>
-                  <input id="name" type="text" name="name" required />
+                  <input id="name" type="text" name="name" required autoComplete="name" />
                   <label htmlFor="email">Email:</label>
-                  <input id="email" type="email" name="email" required />
+                  <input id="email" type="email" name="email" required autoComplete="email" />
                   <label htmlFor="message">Message:</label>
                   <textarea id="message" name="message" cols="30" rows="5" required></textarea>
                   <div style={{ margin: '20px 0' }}>
@@ -91,7 +133,7 @@ const About = () => {
                   <button type="submit" disabled={!capVal}>
                     Submit
                   </button>
-                  {status && <p style={{ marginTop: '10px', fontWeight: 'bold' }}>{status}</p>}
+                  {status && <p role="status" style={{ marginTop: '10px', fontWeight: 'bold' }}>{status}</p>}
                 </form>
               </div>
             </div>
@@ -116,7 +158,7 @@ const About = () => {
               download
               target="_blank"
               rel="noreferrer"
-              aria-label="Download Resume"
+              aria-label="Download Zachary Baca's resume (PDF)"
             >
               Download Resume
             </a>
@@ -125,7 +167,7 @@ const About = () => {
               href="https://www.linkedin.com/in/zacharyjordanbaca/"
               target="_blank"
               rel="noreferrer"
-              aria-label="Visit LinkedIn Profile"
+              aria-label="Visit Zachary Baca's LinkedIn profile (opens in new tab)"
             >
               LinkedIn
             </a>
@@ -134,7 +176,7 @@ const About = () => {
               href="https://github.com/zacharybaca"
               target="_blank"
               rel="noreferrer"
-              aria-label="Visit GitHub Profile"
+              aria-label="Visit Zachary Baca's GitHub profile (opens in new tab)"
             >
               GitHub
             </a>
@@ -144,13 +186,15 @@ const About = () => {
               <div className="cert-item">
                 <img
                   src="/documents/v-school-qr-code.png"
-                  alt="V School QR"
+                  alt="QR code linking to V School Front-End Web Development Certificate"
                   className="cert-qr-sidebar"
+                  loading="lazy"
                 />
                 <a
                   href="https://www.notion.so/V-School-Front-End-Web-Development-Certificate-9b1c8e5f0c7b4d2e9a1e5f8c3a2b6c"
                   target="_blank"
                   rel="noreferrer"
+                  aria-label="View V School Front-End Certification (opens in new tab)"
                 >
                   V School Front-End Certification
                 </a>

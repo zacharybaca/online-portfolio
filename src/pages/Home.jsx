@@ -3,37 +3,34 @@ import Carousel from 'react-bootstrap/Carousel';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import ProjectCard from '../components/ProjectCard';
-import ProgressBar from 'react-bootstrap/ProgressBar';
+import useTypewriter from '../hooks/useTypewriter';
+
+const TYPEWRITER_PHRASES = [
+  'MERN Stack Engineer.',
+  'Full-Stack Developer.',
+  'Legacy Systems Modernizer.',
+  'Problem Solver.',
+];
+
+// Skeleton placeholder card shown while projects load
+const SkeletonCard = () => (
+  <div className="skeleton-card" aria-hidden="true">
+    <div className="skeleton-img" />
+    <div className="skeleton-body">
+      <div className="skeleton-line skeleton-title" />
+      <div className="skeleton-line skeleton-short" />
+      <div className="skeleton-line skeleton-short" />
+    </div>
+  </div>
+);
 
 const Home = () => {
   const { isDarkMode } = useTheme();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState('All');
 
-  // 1. New State for the fake progress number (0 to 100)
-  const [progress, setProgress] = useState(0);
-
-  // 2. Simulation Effect
-  useEffect(() => {
-    let interval;
-    if (loading) {
-      interval = setInterval(() => {
-        setProgress((prev) => {
-          // If we reach 95%, stop and wait for the data (don't lie and say 100% yet)
-          if (prev >= 95) return prev;
-
-          // Increment by 1 every 500ms.
-          // 1% * 100 steps = 50 seconds. This matches your Render wake-up time perfectly.
-          return prev + 1;
-        });
-      }, 500);
-    }
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, [loading]);
-
-  // --- 1. DEFINE IMAGE OPTIONS ---
-  // Ensure paths are correct relative to the public folder.
-  // In Vite, /images/name.jpg resolves to public/images/name.jpg
+  const typewriterText = useTypewriter(TYPEWRITER_PHRASES);
   const darkOptions = [
     {
       name: 'Default (Tech Network)',
@@ -119,36 +116,29 @@ const Home = () => {
   const completedProjects = projects.filter((p) => !p.status || p.status === 'completed');
   const inProgressProjects = projects.filter((p) => p.status === 'in-progress');
 
+  // Build unique tag list from all completed projects for the filter
+  const allTags = ['All', ...new Set(completedProjects.flatMap((p) => p.tags || []))].sort((a, b) =>
+    a === 'All' ? -1 : b === 'All' ? 1 : a.localeCompare(b)
+  );
+
+  const filteredCompleted =
+    activeFilter === 'All'
+      ? completedProjects
+      : completedProjects.filter((p) => p.tags?.includes(activeFilter));
+
   if (loading) {
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '50vh', // Takes up half the screen height
-          padding: '20px',
-          color: 'var(--text-primary)',
-        }}
-      >
-        <h2 style={{ marginBottom: '20px', fontFamily: 'Modern' }}>Loading Projects...</h2>
-
-        <div style={{ width: '100%', maxWidth: '500px' }}>
-          {/* THE PROGRESS COMPONENT */}
-          <ProgressBar
-            animated
-            now={progress}
-            label={`${progress}%`}
-            variant="success" // Green color (or remove for default blue)
-            style={{ height: '30px', fontSize: '1rem' }}
-          />
+      <div className="portfolio-intro">
+        <div className="skeleton-hero" aria-hidden="true">
+          <div className="skeleton-line" style={{ width: '140px', height: '2.5rem' }} />
+          <div className="skeleton-line" style={{ width: '320px', height: '1.2rem', marginTop: '12px' }} />
         </div>
-
-        <p style={{ marginTop: '15px', color: 'var(--text-secondary)', textAlign: 'center' }}>
-          Projects may take a moment to initially load. <br />
-          Please allow up to 50 seconds for projects to fully load.
-        </p>
+        <h2 style={{ color: 'var(--text-primary)', margin: '2rem 0 1rem' }}>Completed Projects</h2>
+        <div className="grid" style={{ maxWidth: '100%', padding: '0 0 2rem' }}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
       </div>
     );
   }
@@ -156,16 +146,24 @@ const Home = () => {
   return (
     <>
       <article className="portfolio-intro">
-        <h1>Hi, I'm Zach.</h1>
-        <p>I am a Software Engineer based in La Porte, IN, specializing in the MERN stack.</p>
+        <h1>Hi, I&apos;m Zach.</h1>
+        <p>
+          I am a{' '}
+          <span className="typewriter" aria-label={TYPEWRITER_PHRASES.join(', ')}>
+            {typewriterText}
+            <span className="typewriter-cursor" aria-hidden="true">|</span>
+          </span>
+        </p>
 
         <div className="theme-selector" style={{ marginTop: '25px', display: 'inline-block' }}>
           <label
+            htmlFor="bg-select"
             style={{ marginRight: '10px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}
           >
             {isDarkMode ? '🎨 Dark Theme:' : '☀️ Light Theme:'}
           </label>
           <select
+            id="bg-select"
             value={selectedBg}
             onChange={(e) => setSelectedBg(e.target.value)}
             style={{
@@ -193,24 +191,38 @@ const Home = () => {
 
       <div className="portfolio-project-thumbs">
         <div className="projects-box">
-          {/* === SECTION 1: COMPLETED (CAROUSEL) === */}
+          {/* === SECTION 1: COMPLETED (CAROUSEL + FILTER) === */}
           {completedProjects.length > 0 && (
             <>
               <h2 style={{ color: 'var(--text-primary)', margin: '1rem 0' }}>Completed Projects</h2>
+
+              {/* Tech-stack filter */}
+              <div className="filter-bar" role="group" aria-label="Filter projects by technology">
+                {allTags.map((tag) => (
+                  <button
+                    key={tag}
+                    className={`filter-btn${activeFilter === tag ? ' active' : ''}`}
+                    onClick={() => setActiveFilter(tag)}
+                    aria-pressed={activeFilter === tag}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
 
               <Carousel
                 fade
                 style={{
                   maxWidth: '800px',
-                  margin: '0 auto',
+                  margin: '1.5rem auto',
                   border: '1px solid var(--border-color)',
                   borderRadius: '10px',
                   overflow: 'hidden',
                 }}
               >
-                {completedProjects.map((project) => (
+                {filteredCompleted.map((project) => (
                   <Carousel.Item key={project._id} interval={5000}>
-                    <Link to={`/project/${project._id}`}>
+                    <Link to={`/project/${project._id}`} aria-label={`View ${project.title}`}>
                       <div
                         style={{
                           height: '400px',
@@ -228,6 +240,7 @@ const Home = () => {
                               : 'https://via.placeholder.com/800x400'
                           }
                           alt={project.title}
+                          loading="lazy"
                           style={{
                             objectFit: 'cover',
                             height: '100%',
@@ -254,6 +267,12 @@ const Home = () => {
                   </Carousel.Item>
                 ))}
               </Carousel>
+
+              {filteredCompleted.length === 0 && (
+                <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '2rem 0' }}>
+                  No projects match this filter.
+                </p>
+              )}
             </>
           )}
 
@@ -261,8 +280,9 @@ const Home = () => {
           {inProgressProjects.length > 0 && (
             <>
               <hr style={{ margin: '3rem 0', borderColor: 'var(--border-color)' }} />
-              <h2 style={{ color: 'var(--text-primary)', margin: '1rem 0' }}>
-                🚧 Currently In Progress
+              <h2 style={{ color: 'var(--text-primary)', margin: '1rem 0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span className="pulse-dot" aria-hidden="true" />
+                Currently In Progress
               </h2>
 
               <div className="grid">

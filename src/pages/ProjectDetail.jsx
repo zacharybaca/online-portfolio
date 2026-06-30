@@ -106,7 +106,7 @@ const ProjectDetail = () => {
         <div className="project-images box" style={{ background: 'transparent', border: 'none' }}>
           {project.imageUrls &&
             project.imageUrls.map((url, i) => (
-              <img key={i} src={resolveImageUrl(url)} alt="Screenshot" className="project-img" />
+              <img key={i} src={resolveImageUrl(url)} alt={`${project.title} screenshot ${i + 1}`} className="project-img" loading="lazy" />
             ))}
         </div>
       </div>

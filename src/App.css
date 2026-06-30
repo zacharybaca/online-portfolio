@@ -908,6 +908,278 @@ body.light-mode .carousel-caption p {
   padding: 20px;
 }
 
+/* =============================================
+   ACCESSIBILITY — Global focus styles
+   ============================================= */
+:focus-visible {
+  outline: 2px solid #4a9eff;
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* =============================================
+   TYPEWRITER HERO
+   ============================================= */
+.typewriter {
+  color: var(--text-primary);
+  font-size: inherit;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.typewriter-cursor {
+  display: inline-block;
+  color: #4a9eff;
+  animation: blink 1s step-end infinite;
+  margin-left: 2px;
+  font-weight: 100;
+}
+
+/* =============================================
+   FILTER BAR
+   ============================================= */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 1rem 0;
+}
+
+.filter-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: 'Modern', sans-serif;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.filter-btn:hover {
+  background: var(--accent-color);
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+
+.filter-btn.active {
+  background: #4a9eff;
+  color: #fff;
+  border-color: #4a9eff;
+}
+
+/* =============================================
+   PULSING STATUS DOT
+   ============================================= */
+@keyframes pulse-ring {
+  0%   { transform: scale(1);   opacity: 1; }
+  70%  { transform: scale(2.2); opacity: 0; }
+  100% { transform: scale(1);   opacity: 0; }
+}
+
+.pulse-dot {
+  position: relative;
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.pulse-dot::before,
+.pulse-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.pulse-dot::before {
+  background: #51cf66;
+}
+
+.pulse-dot::after {
+  background: rgba(81, 207, 102, 0.6);
+  animation: pulse-ring 1.6s ease-out infinite;
+}
+
+/* =============================================
+   SKELETON LOADERS
+   ============================================= */
+@keyframes skeleton-shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+.skeleton-card {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+
+.skeleton-img {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(90deg, var(--accent-color) 25%, var(--border-color) 50%, var(--accent-color) 75%);
+  background-size: 800px 100%;
+  animation: skeleton-shimmer 1.4s infinite linear;
+}
+
+.skeleton-body {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--accent-color) 25%, var(--border-color) 50%, var(--accent-color) 75%);
+  background-size: 800px 100%;
+  animation: skeleton-shimmer 1.4s infinite linear;
+}
+
+.skeleton-title {
+  width: 65%;
+  height: 18px;
+}
+
+.skeleton-short {
+  width: 45%;
+}
+
+.skeleton-hero {
+  padding: '40px 0 20px';
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+/* =============================================
+   LEGACY / COBOL CALLOUT BOX
+   ============================================= */
+.legacy-callout {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: linear-gradient(135deg, rgba(74, 158, 255, 0.08), rgba(81, 207, 102, 0.05));
+  border: 1px solid rgba(74, 158, 255, 0.35);
+  border-left: 4px solid #4a9eff;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 2rem 0;
+}
+
+.legacy-callout-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.legacy-callout-title {
+  font-family: 'Modern', sans-serif;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #4a9eff;
+  margin: 0 0 8px;
+}
+
+.legacy-callout-body {
+  font-size: 14px !important;
+  line-height: 1.7;
+  padding-top: 0 !important;
+  color: var(--text-secondary) !important;
+}
+
+body.light-mode .legacy-callout {
+  background: linear-gradient(135deg, rgba(74, 158, 255, 0.06), rgba(81, 207, 102, 0.04));
+  border-color: rgba(74, 158, 255, 0.4);
+  border-left-color: #2563eb;
+}
+
+body.light-mode .legacy-callout-title {
+  color: #2563eb;
+}
+
+/* =============================================
+   TESTIMONIALS
+   ============================================= */
+.testimonials-section {
+  margin: 2.5rem 0;
+}
+
+.testimonials-section h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.testimonials-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.testimonial-card {
+  margin: 0;
+  padding: 20px 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  border-left: 3px solid var(--text-muted);
+  transition: border-left-color 0.2s ease;
+}
+
+.testimonial-card:hover {
+  border-left-color: #4a9eff;
+}
+
+.testimonial-quote {
+  font-size: 14px !important;
+  font-style: italic;
+  line-height: 1.75;
+  color: var(--text-secondary) !important;
+  padding-top: 0 !important;
+  margin-bottom: 12px;
+}
+
+.testimonial-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.testimonial-name {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-primary);
+}
+
+.testimonial-title {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+body.light-mode .testimonial-card {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+
 /* --- Blog Enhancements --- */
 .blog-card {
   transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
@@ -919,7 +1191,6 @@ body.light-mode .carousel-caption p {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
 }
 
-/* Light mode specific adjustment for the card text */
 body.light-mode .blog-card {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
@@ -928,12 +1199,11 @@ body.light-mode .blog-card:hover {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* Modal styling for Dark/Light Mode toggle consistency */
 .blog-post-modal .modal-content {
   background-color: var(--bg-primary);
   border: 1px solid var(--border-color);
 }
 
 .blog-post-modal .btn-close {
-  filter: var(--logo-filter); /* Reuses your existing invert logic for the close X button */
+  filter: var(--logo-filter);
 }
