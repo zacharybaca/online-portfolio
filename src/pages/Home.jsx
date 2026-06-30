@@ -146,7 +146,7 @@ const Home = () => {
   return (
     <>
       <article className="portfolio-intro">
-        <h1>Hi, I&apos;m Zach.</h1>
+        <h1>Hi, I'm Zach.</h1>
         <p>
           I am a{' '}
           <span className="typewriter" aria-label={TYPEWRITER_PHRASES.join(', ')}>

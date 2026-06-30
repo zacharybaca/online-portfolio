@@ -79,7 +79,7 @@ const About = () => {
                 high-availability legacy systems (z/OS, COBOL) and modern web architecture.
               </p>
               <p>
-                Currently working in Customer Service &amp; Billing at <strong>Surf Internet</strong>, I
+                Currently working in Customer Service & Billing at <strong>Surf Internet</strong>, I
                 apply technical empathy to understand user pain points while maintaining a
                 disciplined engineering workflow. I focus on writing clean, testable JavaScript and
                 building intuitive interfaces that solve real-world problems.
@@ -93,7 +93,7 @@ const About = () => {
               <div className="legacy-callout" role="note" aria-label="Legacy systems expertise highlight">
                 <div className="legacy-callout-icon" aria-hidden="true">🖥️</div>
                 <div>
-                  <h4 className="legacy-callout-title">Enterprise &amp; Legacy Systems Background</h4>
+                <h4 className="legacy-callout-title">Enterprise & Legacy Systems Background</h4>
                   <p className="legacy-callout-body">
                     I have hands-on experience with <strong>COBOL</strong>, <strong>z/OS</strong>, <strong>DB2</strong>, and <strong>VSAM</strong> — skills that are increasingly rare and high-value as enterprises modernize mainframe workloads. This background gives me a deep appreciation for system reliability, data integrity, and performance at scale that most web developers lack.
                   </p>
